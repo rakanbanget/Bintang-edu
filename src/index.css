@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Fredoka", system-ui, sans-serif;
+  --font-display: "Fredoka", system-ui, sans-serif;
+  --font-body: "Quicksand", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-body);
+  background-color: #1e1b4b;
+  color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading, .font-fredoka {
+  font-family: var(--font-heading);
+}
+
+.font-body, .font-quicksand {
+  font-family: var(--font-body);
+}
+
+/* 3D Extruded Title Effect for "CHILDHOOD DREAM" */
+.title-3d-dream {
+  filter: drop-shadow(0 5px 0 rgba(30, 27, 75, 0.85))
+          drop-shadow(0 12px 24px rgba(15, 23, 42, 0.65));
+}
+
+/* Twinkling Cosmic Stars Pattern */
+.bg-space-stars {
+  background-image:
+    radial-gradient(2px 2px at 12% 18%, rgba(255, 255, 255, 0.85), transparent),
+    radial-gradient(1.5px 1.5px at 28% 42%, rgba(253, 224, 71, 0.75), transparent),
+    radial-gradient(2px 2px at 52% 14%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(2.5px 2.5px at 78% 24%, rgba(186, 230, 253, 0.85), transparent),
+    radial-gradient(1.5px 1.5px at 88% 58%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(2px 2px at 64% 76%, rgba(253, 224, 71, 0.65), transparent),
+    radial-gradient(1.5px 1.5px at 18% 82%, rgba(255, 255, 255, 0.7), transparent);
+  background-size: 460px 360px;
+}

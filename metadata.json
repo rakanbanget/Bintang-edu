@@ -1,0 +1,6 @@
+{
+  "name": "SISWACERDAS - Studi Belajar Adaptif",
+  "description": "Platform personalisasi belajar berbasis AI untuk mengenali potensi, menemukan gap kompetensi, dan menyusun roadmap masa depan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
