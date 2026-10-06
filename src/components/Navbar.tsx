@@ -8,12 +8,16 @@ interface NavbarProps {
   activeTab: NavTab;
   onSelectTab: (tab: NavTab) => void;
   onNotify?: (msg: string) => void;
+  onLoginClick?: () => void;
+  onRegisterClick?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   onSelectTab,
   onNotify,
+  onLoginClick,
+  onRegisterClick,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -88,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => onNotify?.('Membuka halaman Masuk...')}
+            onClick={() => onLoginClick?.()}
             className="hidden sm:block font-heading text-sm font-bold text-white hover:text-yellow-300 transition-colors cursor-pointer"
           >
             Masuk
@@ -96,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           
           <button
             type="button"
-            onClick={() => onNotify?.('Membuka halaman Daftar...')}
+            onClick={() => onRegisterClick?.()}
             className="rounded-full bg-yellow-400 px-5 py-2 font-heading text-sm font-bold text-indigo-950 shadow-md transition-all hover:bg-yellow-300 hover:scale-105 active:scale-95 cursor-pointer"
           >
             Daftar

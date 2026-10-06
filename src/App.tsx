@@ -17,8 +17,13 @@ import {
 } from './components/ScienceModulesSection.tsx';
 import { FooterSection } from './components/FooterSection.tsx';
 import { BintangEduMascot } from './components/BintangEduLogo.tsx';
+import { LoginPage } from './components/LoginPage.tsx';
+import { RegisterPage } from './components/RegisterPage.tsx';
+
+type PageView = 'home' | 'login' | 'register';
 
 export default function App() {
+  const [currentPage, setCurrentPage] = useState<PageView>('home');
   const [activeNavTab, setActiveNavTab] = useState<NavTab>('Home');
   const [activeTopicIndex, setActiveTopicIndex] = useState<number>(0);
   const [activeFeature, setActiveFeature] =
@@ -96,6 +101,54 @@ export default function App() {
       item.grade.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Render halaman Login
+  if (currentPage === 'login') {
+    return (
+      <>
+        <LoginPage
+          onBackToHome={() => setCurrentPage('home')}
+          onGoToRegister={() => setCurrentPage('register')}
+          onNotify={showToast}
+        />
+        {toastMessage && (
+          <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-2xl border border-yellow-300/60 bg-indigo-950/95 px-5 py-3.5 shadow-2xl backdrop-blur-md">
+            <Icon
+              icon="lucide:sparkles"
+              className="h-4 w-4 text-yellow-300 shrink-0 animate-pulse"
+            />
+            <span className="font-heading text-xs sm:text-sm font-bold text-white">
+              {toastMessage}
+            </span>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Render halaman Register
+  if (currentPage === 'register') {
+    return (
+      <>
+        <RegisterPage 
+          onBackToHome={() => setCurrentPage('home')}
+          onGoToLogin={() => setCurrentPage('login')}
+          onNotify={showToast}
+        />
+        {toastMessage && (
+          <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-2xl border border-yellow-300/60 bg-indigo-950/95 px-5 py-3.5 shadow-2xl backdrop-blur-md">
+            <Icon
+              icon="lucide:sparkles"
+              className="h-4 w-4 text-yellow-300 shrink-0 animate-pulse"
+            />
+            <span className="font-heading text-xs sm:text-sm font-bold text-white">
+              {toastMessage}
+            </span>
+          </div>
+        )}
+      </>
+    );
+  }
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-b from-indigo-950 via-blue-900 to-purple-950 bg-space-stars text-white font-body selection:bg-yellow-300 selection:text-indigo-950">
       {/* Toast Feedback */}
@@ -111,11 +164,13 @@ export default function App() {
         </div>
       )}
 
-      {/* 1. NAVBAR ATAS (Logo Resmi Bintang Edu + Menu Home, Activity, Shop, Tours, About + Profil Mintion) */}
+      {/* 1. NAVBAR ATAS (Logo Resmi Bintang Edu + Menu Home, Activity, Tours, About + Tombol Masuk Daftar) */}
       <Navbar
         activeTab={activeNavTab}
         onSelectTab={handleSelectNavTab}
         onNotify={showToast}
+        onLoginClick={() => setCurrentPage('login')}
+        onRegisterClick={() => setCurrentPage('register')}
       />
 
       {/* 2. KONTEN UTAMA DASHBOARD 3D RUANG ANGKASA */}

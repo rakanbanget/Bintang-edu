@@ -39,3 +39,31 @@ h1, h2, h3, h4, h5, h6, .font-heading, .font-fredoka {
     radial-gradient(1.5px 1.5px at 18% 82%, rgba(255, 255, 255, 0.7), transparent);
   background-size: 460px 360px;
 }
+
+/* Animasi galaksi halaman Login */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(6deg); }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10px, -16px); }
+}
+
+.animate-twinkle {
+  animation: twinkle 2.8s ease-in-out infinite;
+}
+
+.animate-floaty {
+  animation: floaty 6s ease-in-out infinite;
+}
+
+.animate-drift {
+  animation: drift 9s ease-in-out infinite;
+}
