@@ -19,11 +19,11 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
   return (
     <footer
       id="kontak"
-      className="relative z-20 pt-8 pb-12 px-5 sm:px-8 lg:px-12 text-blue-200"
+      className="relative z-20 pt-8 pb-12 px-5 sm:px-8 lg:px-12 text-purple-200"
     >
       <div className="mx-auto max-w-6xl">
         {/* Baris Utama Footer */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-white/15 pb-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-purple-500/20 pb-8">
           {/* 1. Kiri: Logo Resmi Bintang Edu + Slogan */}
           <a
             href="#beranda"
@@ -35,10 +35,10 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
             />
             <div className="flex flex-col">
               <div className="flex items-baseline gap-1 font-heading text-2xl font-bold tracking-tight leading-none">
-                <span className="text-yellow-300">Bintang</span>
+                <span className="text-amber-300">Bintang</span>
                 <span className="text-white text-lg font-bold">Edu</span>
               </div>
-              <span className="mt-0.5 font-body text-[11px] font-bold text-blue-200">
+              <span className="mt-0.5 font-body text-[11px] font-bold text-purple-200">
                 Belajar Sains, Bermain Tanpa Batas
               </span>
             </div>
@@ -59,7 +59,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
                     onFooterMenuClick(item.label);
                   }
                 }}
-                className="font-heading text-xs sm:text-sm font-bold tracking-wide text-blue-200 transition-colors hover:text-yellow-300"
+                className="font-heading text-xs sm:text-sm font-bold tracking-wide text-purple-200 transition-colors hover:text-amber-300"
               >
                 {item.label}
               </a>
@@ -74,7 +74,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
                 onFooterMenuClick?.('Hubungi Kami: halo@bintang-edu.id')
               }
               aria-label="Email Bintang Edu"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-blue-100 border border-white/20 transition-all hover:bg-yellow-400 hover:text-indigo-950 cursor-pointer"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-purple-100 border border-purple-500/30 transition-all hover:bg-amber-400 hover:text-slate-950 cursor-pointer"
             >
               <Icon icon="lucide:mail" className="h-4 w-4" />
             </button>
@@ -84,7 +84,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
                 onFooterMenuClick?.('Layanan Bantuan: (021) 5088-7799')
               }
               aria-label="Telepon Bintang Edu"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-blue-100 border border-white/20 transition-all hover:bg-yellow-400 hover:text-indigo-950 cursor-pointer"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-purple-100 border border-purple-500/30 transition-all hover:bg-amber-400 hover:text-slate-950 cursor-pointer"
             >
               <Icon icon="lucide:phone" className="h-4 w-4" />
             </button>
@@ -94,7 +94,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
                 onFooterMenuClick?.('Portal Resmi: www.bintang-edu.id')
               }
               aria-label="Website Bintang Edu"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-blue-100 border border-white/20 transition-all hover:bg-yellow-400 hover:text-indigo-950 cursor-pointer"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-purple-100 border border-purple-500/30 transition-all hover:bg-amber-400 hover:text-slate-950 cursor-pointer"
             >
               <Icon icon="lucide:globe" className="h-4 w-4" />
             </button>
@@ -102,7 +102,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({
         </div>
 
         {/* Baris Copyright Kecil di Bawah */}
-        <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 font-body text-xs font-bold text-blue-200/85">
+        <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 font-body text-xs font-bold text-purple-200/75">
           <p>
             © {new Date().getFullYear()} Bintang Edu — Belajar Sains, Bermain
             Tanpa Batas. All rights reserved.

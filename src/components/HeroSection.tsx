@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
+import { useNavigate } from 'react-router-dom';
 import {
   AstronautAndStarMascot3D,
   Rocket3D,
@@ -83,6 +84,8 @@ interface HeroSectionProps {
   onAddStars?: (stars: number, reason: string) => void;
   onNotify?: (msg: string) => void;
   totalStars: number;
+  onNavigate?: (route: any) => void;
+  isAuthenticated?: boolean;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
@@ -92,7 +95,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onOpenApplicationModal,
   onAddStars,
   onNotify,
+  onNavigate,
+  isAuthenticated = false,
 }) => {
+  const navigate = useNavigate();
   const [gamepadScreenMode, setGamepadScreenMode] = useState<number>(0);
   const [activeBubbleQuote, setActiveBubbleQuote] = useState<string>(
     'Wonderful experience!'
@@ -119,7 +125,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   };
 
   const scrollToModules = () => {
-    const el = document.getElementById('modul-sains');
+    const el = document.getElementById('ruang-eksplorasi') || document.getElementById('modul-sains');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
@@ -134,10 +140,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* ================================================================
             PANGGUNG UTAMA 3D RUANG ANGKASA ("Chasing Yesterday's Dreams" Style)
            ================================================================ */}
-        <div className="relative overflow-hidden rounded-[36px] border border-white/15 bg-gradient-to-br from-indigo-950 via-blue-900 to-purple-950 px-5 pt-8 pb-24 sm:px-10 sm:pt-10 sm:pb-28 lg:px-14 shadow-[0_30px_80px_rgba(15,23,42,0.85)]">
-          {/* Pendaran Atmosfer Biru Terang di Kanan Atas & Ungu di Kiri Bawah */}
-          <div className="pointer-events-none absolute -top-24 -right-20 h-[420px] w-[420px] rounded-full bg-sky-400/25 blur-[95px]" />
-          <div className="pointer-events-none absolute top-1/3 left-1/3 h-80 w-80 rounded-full bg-blue-500/20 blur-[90px]" />
+        <div className="relative overflow-hidden rounded-3xl border border-purple-500/30 bg-gradient-to-br from-[#1c0f45] via-[#13092d] to-[#0d0521] px-5 pt-8 pb-24 sm:px-10 sm:pt-10 sm:pb-28 lg:px-14 shadow-[0_22px_48px_rgba(2,6,23,0.38),0_0_28px_rgba(139,92,246,0.24)]">
+          {/* Pendaran Atmosfer Cerah di Kanan Atas & Kiri Bawah */}
+          <div className="pointer-events-none absolute -top-24 -right-20 h-[420px] w-[420px] rounded-full bg-sky-400/25 blur-[100px]" />
+          <div className="pointer-events-none absolute top-1/3 left-1/3 h-80 w-80 rounded-full bg-blue-500/20 blur-[95px]" />
           <div className="pointer-events-none absolute -bottom-24 -left-16 h-96 w-96 rounded-full bg-purple-700/30 blur-[90px]" />
 
           {/* Jejak Cahaya Bima Sakti Melengkung dari Atas ke Kiri Bawah */}
@@ -151,7 +157,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <linearGradient id="milkyWayTrail" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.35" />
                 <stop offset="50%" stopColor="#60A5FA" stopOpacity="0.18" />
-                <stop offset="100%" stopColor="#A855F7" stopOpacity="0" />
+                <stop offset="100%" stopColor="#7E22CE" stopOpacity="0" />
               </linearGradient>
             </defs>
             <path
@@ -160,8 +166,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             />
           </svg>
 
-          {/* Setengah Lingkaran Planet Biru Besar di Tepi Kiri Tengah */}
-          <div className="pointer-events-none absolute top-36 -left-24 h-64 w-64 rounded-full bg-gradient-to-br from-sky-400/25 via-blue-700/35 to-indigo-950/60 blur-[1px] border border-sky-300/15" />
+          {/* Setengah Lingkaran Planet Lembut di Tepi Kiri Tengah */}
+          <div className="pointer-events-none absolute top-36 -left-24 h-64 w-64 rounded-full bg-gradient-to-br from-indigo-500/20 via-purple-600/30 to-blue-900/50 blur-[1px] border border-white/20" />
 
           {/* Planet Pink Bercincin Tersenyum di Pojok Kiri Atas */}
           <div className="absolute top-5 left-5 sm:top-7 sm:left-10 z-20">
@@ -250,12 +256,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </span>
                 </div>
 
-                <h1 className="font-heading text-4xl sm:text-6xl xl:text-[68px] font-bold uppercase leading-[1.04] tracking-wider select-none title-3d-dream">
-                  <span className="block bg-gradient-to-b from-white via-blue-50 to-yellow-200 bg-clip-text text-transparent">
+                <h1 className="font-heading text-4xl sm:text-6xl xl:text-[68px] font-bold uppercase leading-[1.04] tracking-wider select-none title-3d-dream drop-shadow-md">
+                  <span className="block text-white drop-shadow-sm">
                     PETUALANGAN
                   </span>
                   <span className="mt-1 inline-flex items-center justify-center lg:justify-start gap-3">
-                    <span className="bg-gradient-to-b from-white via-yellow-200 to-yellow-400 bg-clip-text text-transparent">
+                    <span className="text-yellow-300 drop-shadow-sm">
                       GALAKSI SAINS
                     </span>
                     <SpaceCupcake3D />
@@ -266,34 +272,46 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               {/* PARAGRAF DESKRIPSI + PLANET BIRU BERCINCIN DI SISI KANAN */}
               <div className="relative z-20 mt-4 grid grid-cols-1 lg:grid-cols-12 items-start gap-6">
                 <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-                  <p className="font-body text-xs sm:text-sm leading-relaxed font-semibold text-blue-100/90 max-w-md mx-auto lg:mx-0">
+                  <p className="font-body text-xs sm:text-sm leading-relaxed font-bold text-white max-w-md mx-auto lg:mx-0 drop-shadow-sm">
                     Terbang bersama roket ilmu pengetahuan! Platform edukasi sains interaktif untuk anak SD yang membuat belajar tata surya dan eksperimen jadi seru tanpa batas.
                   </p>
 
                   {/* BAR AKSI: "▸ Mulai Petualangan" & Tombol Kuning "Coba Eksperimen" */}
-                  <div className="mx-auto lg:mx-0 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 rounded-2xl border border-white/15 bg-indigo-950/65 p-2.5 pl-5 shadow-2xl backdrop-blur-md max-w-md">
+                  <div className="mx-auto lg:mx-0 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 rounded-2xl border border-purple-500/30 bg-[#120a2a]/80 p-2.5 pl-5 shadow-2xl backdrop-blur-md max-w-md">
                     <button
                       type="button"
                       onClick={() => {
-                        if (onOpenApplicationModal) {
+                        const el = document.getElementById('ruang-eksplorasi') || document.getElementById('modul-sains');
+                        if (el) {
+                          el.scrollIntoView({ behavior: 'smooth' });
+                        } else if (onOpenApplicationModal) {
                           onOpenApplicationModal();
                         } else {
-                          onStartExperiment(activeTopic);
+                          navigate('/virtual-lab');
                         }
                       }}
-                      className="group inline-flex items-center gap-2.5 font-heading text-xs sm:text-sm font-bold text-white transition-colors hover:text-yellow-300 cursor-pointer whitespace-nowrap"
+                      className="group inline-flex items-center gap-2.5 font-heading text-xs sm:text-sm font-bold text-white transition-colors hover:text-amber-300 cursor-pointer whitespace-nowrap"
                     >
                       <Icon
                         icon="lucide:play"
-                        className="h-3.5 w-3.5 text-white transition-transform group-hover:translate-x-0.5 group-hover:text-yellow-300"
+                        className="h-3.5 w-3.5 text-white transition-transform group-hover:translate-x-0.5 group-hover:text-amber-300"
                       />
                       <span>Mulai Petualangan</span>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => onStartExperiment(activeTopic)}
-                      className="rounded-full bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-400 px-7 py-2.5 font-heading text-xs sm:text-sm font-bold tracking-wide text-indigo-950 shadow-[0_6px_20px_rgba(250,204,21,0.45)] transition-all duration-200 hover:from-yellow-200 hover:to-yellow-300 hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                      onClick={() => {
+                        if (!isAuthenticated) {
+                          navigate('/login');
+                          return;
+                        }
+                        navigate('/virtual-lab');
+                        if (onStartExperiment) {
+                          onStartExperiment(activeTopic);
+                        }
+                      }}
+                      className="rounded-full bg-amber-400 hover:bg-amber-300 px-7 py-2.5 font-heading text-xs sm:text-sm font-bold tracking-wide text-slate-950 shadow-[0_6px_20px_rgba(250,204,21,0.45)] transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
                     >
                       Coba Eksperimen
                     </button>
@@ -372,10 +390,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 fill="url(#moonHorizonGrad)"
               />
               {/* Kawah-kawah Bulan */}
-              <ellipse cx="145" cy="88" rx="22" ry="11" fill="#312E81" opacity="0.7" />
-              <ellipse cx="345" cy="80" rx="28" ry="14" fill="#312E81" opacity="0.75" />
-              <circle cx="290" cy="108" r="10" fill="#312E81" opacity="0.65" />
-              <circle cx="195" cy="110" r="8" fill="#312E81" opacity="0.6" />
+              <ellipse cx="145" cy="88" rx="22" ry="11" fill="#312E81" opacity="0.8" />
+              <ellipse cx="345" cy="80" rx="28" ry="14" fill="#312E81" opacity="0.85" />
+              <circle cx="290" cy="108" r="10" fill="#312E81" opacity="0.75" />
+              <circle cx="195" cy="110" r="8" fill="#312E81" opacity="0.7" />
             </svg>
           </div>
 
@@ -395,7 +413,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* ================================================================
             BARIS PILIHAN MISI IMPIAN HARIAN (Timeline Misi Sains Bintang Edu)
            ================================================================ */}
-        <div className="mt-6 rounded-3xl border border-white/15 bg-indigo-950/60 px-4 py-4 sm:px-6 shadow-xl backdrop-blur-md">
+        <div className="mt-6 rounded-3xl border border-purple-500/30 bg-[#120a2a]/90 px-4 py-4 sm:px-6 shadow-[0_12px_32px_rgba(2,6,23,0.3)] backdrop-blur-md">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {DAILY_SCIENCE_SCHEDULE.map((item, idx) => {
               const isSelected = idx === activeTopicIndex;
@@ -403,22 +421,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => onSelectTopic(idx)}
+                  onClick={() => {
+                    onSelectTopic(idx);
+                    const el = document.getElementById('ruang-eksplorasi') || document.getElementById('modul-sains');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className={`group flex flex-col justify-between rounded-2xl border px-4 py-3 text-left transition-all duration-150 cursor-pointer ${
                     isSelected
-                      ? 'border-yellow-300 bg-gradient-to-r from-indigo-900 to-blue-900 text-white shadow-[0_0_20px_rgba(250,204,21,0.2)]'
-                      : 'border-white/15 bg-white/5 hover:border-yellow-300/50 hover:bg-white/10'
+                      ? 'border-amber-400 bg-gradient-to-r from-[#1c0f45] to-[#13092d] text-white shadow-[0_0_20px_rgba(250,204,21,0.2)]'
+                      : 'border-purple-500/20 bg-[#13092d]/50 hover:border-amber-400/50 hover:bg-[#1a0e40]/70'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2 w-full">
-                    <span className="font-heading text-xs font-bold tracking-wider uppercase text-yellow-300">
+                    <span className="font-heading text-xs font-bold tracking-wider uppercase text-amber-300">
                       {item.category}
                     </span>
                     <span
                       className={`rounded-md px-2 py-0.5 font-heading text-[10px] font-bold uppercase ${
                         isSelected
-                          ? 'bg-yellow-400 text-indigo-950'
-                          : 'bg-white/10 text-blue-200'
+                          ? 'bg-amber-400 text-slate-950 font-black'
+                          : 'bg-white/10 text-purple-200'
                       }`}
                     >
                       {item.grade}
