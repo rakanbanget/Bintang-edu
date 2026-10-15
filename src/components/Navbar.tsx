@@ -9,30 +9,19 @@ export interface NavbarProps {
   activeTab: NavTab;
   onSelectTab: (tab: NavTab) => void;
   onNotify?: (msg: string) => void;
-<<<<<<< HEAD
   onGoToLogin?: () => void;
   onGoToRegister?: () => void;
   onOpenSearch?: () => void;
   onOpenProfile?: () => void;
   studentName?: string;
   totalStars?: number;
-=======
-  onLoginClick?: () => void;
-  onRegisterClick?: () => void;
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   onSelectTab,
-<<<<<<< HEAD
   onGoToLogin,
   onGoToRegister,
-=======
-  onNotify,
-  onLoginClick,
-  onRegisterClick,
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
 }) => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -120,16 +109,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Tombol Masuk */}
           <button
             type="button"
-<<<<<<< HEAD
             onClick={() => {
               if (onGoToLogin) onGoToLogin();
               else navigate('/login');
             }}
             className="font-heading text-base font-bold text-white hover:text-amber-300 transition-colors cursor-pointer whitespace-nowrap"
-=======
-            onClick={() => onLoginClick?.()}
-            className="hidden sm:block font-heading text-sm font-bold text-white hover:text-yellow-300 transition-colors cursor-pointer"
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
           >
             Masuk
           </button>
@@ -137,16 +121,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Tombol Daftar — amber chunky pill */}
           <button
             type="button"
-<<<<<<< HEAD
             onClick={() => {
               if (onGoToRegister) onGoToRegister();
               else navigate('/register');
             }}
             className="rounded-full bg-amber-400 hover:bg-amber-300 px-6 py-2.5 font-heading text-sm font-extrabold text-slate-950 shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
-=======
-            onClick={() => onRegisterClick?.()}
-            className="rounded-full bg-yellow-400 px-5 py-2 font-heading text-sm font-bold text-indigo-950 shadow-md transition-all hover:bg-yellow-300 hover:scale-105 active:scale-95 cursor-pointer"
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
           >
             Daftar
           </button>

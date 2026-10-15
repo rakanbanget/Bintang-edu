@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { BintangEduMascot } from './BintangEduLogo.tsx';
 
-<<<<<<< HEAD
 interface UserData {
   id: number;
   name: string;
@@ -11,23 +10,17 @@ interface UserData {
   learning_style?: string | null;
 }
 
-=======
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
 interface LoginPageProps {
   onBackToHome?: () => void;
   onGoToRegister?: () => void;
   onNotify?: (msg: string) => void;
-<<<<<<< HEAD
   onLoginSuccess?: (userData?: any) => void;
-=======
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({
   onBackToHome,
   onGoToRegister,
   onNotify,
-<<<<<<< HEAD
   onLoginSuccess,
 }) => {
   const [email, setEmail] = useState('');
@@ -134,21 +127,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     } finally {
       setLoading(false);
     }
-=======
-}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !password.trim()) {
-      onNotify?.('⚠️ Isi email/nomor ponsel dan kata sandi dulu ya!');
-      return;
-    }
-    onNotify?.('🚀 Selamat datang kembali, Ilmuwan Cilik! Memasuki petualangan...');
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
   };
 
   return (
@@ -270,7 +248,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               Lanjutkan petualangan sainsmu di galaksi pengetahuan
             </p>
 
-<<<<<<< HEAD
             {/* Galaxy Alert Banner */}
             {errorMessage && (
               <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-red-200 bg-red-50 p-3.5 text-red-700 shadow-sm animate-pulse">
@@ -332,10 +309,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 </div>
               </div>
 
-=======
-            {/* Form login */}
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
               {/* Input Email / Nomor Ponsel */}
               <div>
                 <label
@@ -415,7 +388,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               {/* Tombol aksi utama kuning/oranye */}
               <button
                 type="submit"
-<<<<<<< HEAD
                 disabled={loading}
                 className="w-full rounded-xl bg-gradient-to-r from-yellow-400 to-orange-400 py-3 font-heading text-sm font-bold tracking-wide text-indigo-950 shadow-lg shadow-orange-300/40 transition-all hover:from-yellow-300 hover:to-orange-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -430,12 +402,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                     <Icon icon="lucide:rocket" className="h-4 w-4" />
                   </>
                 )}
-=======
-                className="w-full rounded-xl bg-gradient-to-r from-yellow-400 to-orange-400 py-3 font-heading text-sm font-bold tracking-wide text-indigo-950 shadow-lg shadow-orange-300/40 transition-all hover:from-yellow-300 hover:to-orange-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
-              >
-                <span>Masuk Petualangan</span>
-                <Icon icon="lucide:rocket" className="h-4 w-4" />
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
               </button>
             </form>
 

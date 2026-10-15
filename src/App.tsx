@@ -19,7 +19,6 @@ import { FooterSection } from './components/FooterSection.tsx';
 import { SolarSystemMiniLab } from './components/SolarSystemMiniLab.tsx';
 import { TeacherParentPortalSection } from './components/TeacherParentPortalSection.tsx';
 import { BintangEduMascot } from './components/BintangEduLogo.tsx';
-<<<<<<< HEAD
 import { StudentDashboardMOne } from './components/StudentDashboardMOne.tsx';
 import { TeacherDashboard } from './components/TeacherDashboard.tsx';
 import { VirtualLabModule, SidebarNavKey, StationId } from './components/VirtualLabModule.tsx';
@@ -160,15 +159,6 @@ export default function App() {
     }
   };
 
-=======
-import { LoginPage } from './components/LoginPage.tsx';
-import { RegisterPage } from './components/RegisterPage.tsx';
-
-type PageView = 'home' | 'login' | 'register';
-
-export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageView>('home');
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
   const [activeNavTab, setActiveNavTab] = useState<NavTab>('Home');
   const [activeTopicIndex, setActiveTopicIndex] = useState<number>(0);
   const [activeFeature, setActiveFeature] =
@@ -246,7 +236,6 @@ export default function App() {
       item.grade.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-<<<<<<< HEAD
   // =========================================================================
   // ROUTING VIEW RENDERERS (SMOOTH SPA NAVIGATION & PERSISTENT SHELL)
   // =========================================================================
@@ -538,56 +527,6 @@ export default function App() {
   }
 
   // 7. PANGGUNG GALAKSI 3D ('landing' & 'landing-3d')
-=======
-  // Render halaman Login
-  if (currentPage === 'login') {
-    return (
-      <>
-        <LoginPage
-          onBackToHome={() => setCurrentPage('home')}
-          onGoToRegister={() => setCurrentPage('register')}
-          onNotify={showToast}
-        />
-        {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-2xl border border-yellow-300/60 bg-indigo-950/95 px-5 py-3.5 shadow-2xl backdrop-blur-md">
-            <Icon
-              icon="lucide:sparkles"
-              className="h-4 w-4 text-yellow-300 shrink-0 animate-pulse"
-            />
-            <span className="font-heading text-xs sm:text-sm font-bold text-white">
-              {toastMessage}
-            </span>
-          </div>
-        )}
-      </>
-    );
-  }
-
-  // Render halaman Register
-  if (currentPage === 'register') {
-    return (
-      <>
-        <RegisterPage 
-          onBackToHome={() => setCurrentPage('home')}
-          onGoToLogin={() => setCurrentPage('login')}
-          onNotify={showToast}
-        />
-        {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-2xl border border-yellow-300/60 bg-indigo-950/95 px-5 py-3.5 shadow-2xl backdrop-blur-md">
-            <Icon
-              icon="lucide:sparkles"
-              className="h-4 w-4 text-yellow-300 shrink-0 animate-pulse"
-            />
-            <span className="font-heading text-xs sm:text-sm font-bold text-white">
-              {toastMessage}
-            </span>
-          </div>
-        )}
-      </>
-    );
-  }
-
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-b from-purple-600 via-[#7c3aed] to-[#0f0b29] text-white font-body selection:bg-yellow-300 selection:text-indigo-950 transition-all duration-300 ease-in-out">
       {/* Tombol Kembali ke Dashboard Peserta Siswa (hanya tampil di landing-3d, sembunyi di landing utama '/') */}
@@ -631,22 +570,16 @@ export default function App() {
         </div>
       )}
 
-      {/* 1. NAVBAR ATAS (Logo Resmi Bintang Edu + Menu Home, Activity, Tours, About + Tombol Masuk Daftar) */}
+      {/* 1. NAVBAR ATAS (Logo Resmi Bintang Edu + Menu Home, Activity, Shop, Tours, About + Profil Mintion) */}
       <Navbar
         activeTab={activeNavTab}
         onSelectTab={handleSelectNavTab}
-<<<<<<< HEAD
         onOpenSearch={() => setSearchModalOpen(true)}
         onOpenProfile={() => setProfileModalOpen(true)}
         studentName={studentName}
         totalStars={totalStars}
         onGoToLogin={() => navigateTo('login')}
         onGoToRegister={() => navigateTo('register')}
-=======
-        onNotify={showToast}
-        onLoginClick={() => setCurrentPage('login')}
-        onRegisterClick={() => setCurrentPage('register')}
->>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
       />
 
       {/* 2. KONTEN UTAMA DASHBOARD 3D RUANG ANGKASA */}

@@ -549,19 +549,32 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
     setIsGeneratingQuiz(true);
 
     try {
-      const formData = new FormData();
-      if (materialInputMode === 'file' && uploadedFile) {
-        formData.append('file', uploadedFile);
-      } else {
-        formData.append('materiText', materialText);
-      }
-      formData.append('topic', newQuizTopic);
-      formData.append('targetGroup', newQuizTargetGroup);
+      let response: Response;
 
-      const response = await fetch('http://localhost:5001/api/generate-quiz', {
-        method: 'POST',
-        body: formData,
-      });
+      if (materialInputMode === 'file' && uploadedFile) {
+        // Mode File: Kirim Multipart Form-Data (PDF)
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+        formData.append('topic', newQuizTopic);
+        formData.append('targetGroup', newQuizTargetGroup);
+        response = await fetch('http://localhost:5001/api/generate-quiz', {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+        // Mode Teks: Kirim JSON payload
+        response = await fetch('http://localhost:5001/api/generate-quiz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            materiText: materialText,
+            topic: newQuizTopic,
+            targetGroup: newQuizTargetGroup,
+          }),
+        });
+      }
 
       if (!response.ok) {
         throw new Error(`Server status: ${response.status}`);
