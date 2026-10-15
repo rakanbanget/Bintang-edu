@@ -28,14 +28,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<'student' | 'teacher' | 'parent'>(() => {
+  const [role, setRole] = useState<'student' | 'teacher'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const r = (params.get('role') || localStorage.getItem('userRole') || '').toLowerCase();
-      if (r.includes('guru') || r.includes('teacher') || r.includes('pendidik')) return 'teacher';
-      if (r.includes('ortu') || r.includes('parent') || r.includes('orang tua')) return 'parent';
+      if (r.includes('guru') || r.includes('teacher') || r.includes('pendidik') || r.includes('ortu') || r.includes('parent') || r.includes('orang tua')) return 'teacher';
     }
-    return 'teacher'; // Prioritaskan guru agar memudahkan pengajar langsung terdaftar ke EduAdmin
+    return 'teacher'; // Prioritaskan guru / orang tua agar memudahkan langsung terdaftar ke EduAdmin
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -105,15 +104,15 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
         throw new Error(data.message || 'Pendaftaran gagal. Silakan coba kembali.');
       }
 
-      const userRoleNormalized = role === 'teacher' ? 'guru' : role === 'parent' ? 'orang tua' : 'siswa';
-      const registeredName = data.user?.name || fullName || (role === 'teacher' ? 'Bapak/Ibu Guru' : 'Kadet');
+      const userRoleNormalized = role === 'teacher' ? 'guru' : 'siswa';
+      const registeredName = data.user?.name || fullName || (role === 'teacher' ? 'Bapak/Ibu Guru & Orang Tua' : 'Kadet');
 
       const userObject = {
         ...(data.user || {}),
         name: registeredName,
         email,
-        role: role, // Pastikan role sesuai yang dipilih pengguna (teacher / guru)
-        grade: role === 'teacher' ? 'Pendidik Sains SD' : role === 'parent' ? 'Wali Murid SD' : 'Kelas 5 SD',
+        role: role,
+        grade: role === 'teacher' ? 'Pendidik / Orang Tua SD' : (GRADE_OPTIONS.find(g => g.value === selectedGrade)?.label || 'Kelas 5 SD'),
       };
 
       localStorage.setItem('token', data.token || 'auth-token');
@@ -125,26 +124,24 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
 
       const successNotice =
         role === 'teacher'
-          ? `Selamat Datang di Portal EduAdmin Guru, ${registeredName}! 👨‍🏫`
-          : role === 'parent'
-          ? `Selamat Datang di Portal Pendampingan Orang Tua, ${registeredName}! 👩‍👦`
+          ? `Selamat Datang di Portal EduAdmin Guru & Orang Tua, ${registeredName}! 👨‍🏫👩‍👦`
           : `Selamat Datang di Stasiun Bintang Edu, ${registeredName}! 🎉`;
       setSuccessMessage(successNotice);
       onNotify?.(successNotice);
       
-      // Transisi langsung ke Dashboard EduAdmin Guru
+      // Transisi langsung ke Dashboard EduAdmin Guru & Orang Tua
       setTimeout(() => {
         if (onRegisterSuccess) onRegisterSuccess(userObject);
       }, 150);
     } catch (err: any) {
       if (err.name === 'TypeError' || err.message?.includes('fetch') || err.message?.includes('Network')) {
-        const userRoleNormalized = role === 'teacher' ? 'guru' : role === 'parent' ? 'orang tua' : 'siswa';
+        const userRoleNormalized = role === 'teacher' ? 'guru' : 'siswa';
         const fallbackUser = {
           id: Date.now(),
-          name: fullName || (role === 'teacher' ? 'Bapak/Ibu Guru' : 'Kadet'),
+          name: fullName || (role === 'teacher' ? 'Bapak/Ibu Guru & Orang Tua' : 'Kadet'),
           email,
           role,
-          grade: role === 'teacher' ? 'Pendidik Sains SD' : role === 'parent' ? 'Wali Murid SD' : 'Kelas 5 SD',
+          grade: role === 'teacher' ? 'Pendidik / Orang Tua SD' : (GRADE_OPTIONS.find(g => g.value === selectedGrade)?.label || 'Kelas 5 SD'),
         };
         localStorage.setItem('token', 'local-token');
         localStorage.setItem('user', JSON.stringify(fallbackUser));
@@ -315,11 +312,11 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 <label className="mb-1.5 block font-body text-xs font-bold text-indigo-950">
                   Daftar Sebagai
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setRole('student')}
-                    className={`rounded-xl border-2 py-2 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    className={`rounded-xl border-2 py-2.5 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       role === 'student'
                         ? 'border-purple-600 bg-purple-50 text-purple-700 shadow-sm'
                         : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
@@ -331,26 +328,14 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setRole('teacher')}
-                    className={`rounded-xl border-2 py-2 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    className={`rounded-xl border-2 py-2.5 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       role === 'teacher'
                         ? 'border-purple-600 bg-purple-50 text-purple-700 shadow-sm'
                         : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
                     <Icon icon="lucide:book-open" className="h-4 w-4" />
-                    <span>Guru</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRole('parent')}
-                    className={`rounded-xl border-2 py-2 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                      role === 'parent'
-                        ? 'border-purple-600 bg-purple-50 text-purple-700 shadow-sm'
-                        : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    <Icon icon="lucide:heart-handshake" className="h-4 w-4" />
-                    <span>Orang Tua</span>
+                    <span>Guru / Orang Tua</span>
                   </button>
                 </div>
               </div>
@@ -487,14 +472,14 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 )}
               </div>
 
-              {/* Pilihan Jenjang Kelas (Hanya untuk Siswa/Orang Tua, ditiadakan untuk Guru) */}
-              {role !== 'teacher' && (
+              {/* Pilihan Jenjang Kelas (Khusus Siswa, ditiadakan untuk Guru / Orang Tua) */}
+              {role === 'student' && (
                 <div>
                   <label
                     htmlFor="register-grade"
                     className="mb-1.5 block font-body text-xs font-bold text-indigo-950"
                   >
-                    {role === 'parent' ? 'Jenjang Kelas Anak' : 'Jenjang Kelas'}
+                    Jenjang Kelas
                   </label>
                   <div className="relative">
                     <Icon
@@ -508,7 +493,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                       className="w-full rounded-xl border-2 border-slate-200 bg-slate-50 py-2.5 pl-10 pr-10 font-body text-sm font-semibold text-indigo-950 outline-none transition-all focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 cursor-pointer appearance-none"
                     >
                       <option value="" disabled className="text-slate-400">
-                        {role === 'parent' ? 'Pilih jenjang kelas anak' : 'Pilih jenjang kelasmu'}
+                        Pilih jenjang kelasmu
                       </option>
                       {GRADE_OPTIONS.map((grade) => (
                         <option key={grade.value} value={grade.value}>

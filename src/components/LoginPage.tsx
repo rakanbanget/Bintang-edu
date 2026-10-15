@@ -25,14 +25,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginRole, setLoginRole] = useState<'student' | 'teacher' | 'parent'>(() => {
+  const [loginRole, setLoginRole] = useState<'student' | 'teacher'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const r = (params.get('role') || localStorage.getItem('userRole') || '').toLowerCase();
-      if (r.includes('guru') || r.includes('teacher') || r.includes('pendidik')) return 'teacher';
-      if (r.includes('ortu') || r.includes('parent') || r.includes('orang tua')) return 'parent';
+      if (r.includes('guru') || r.includes('teacher') || r.includes('pendidik') || r.includes('ortu') || r.includes('parent') || r.includes('orang tua')) return 'teacher';
     }
-    return 'teacher'; // Prioritaskan guru agar memudahkan pengajar langsung masuk
+    return 'teacher'; // Prioritaskan guru / orang tua agar memudahkan langsung masuk
   });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -64,19 +63,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       }
 
       const backendRole = (data.user?.role || '').toLowerCase();
-      // Prioritas: Jika user memilih tab Guru ATAU akun database adalah teacher -> role MUST be teacher!
-      const isTeacher = loginRole === 'teacher' || backendRole === 'teacher' || backendRole.includes('guru') || backendRole.includes('pendidik');
-      const isParent = !isTeacher && (loginRole === 'parent' || backendRole === 'parent' || backendRole.includes('orang tua'));
+      // Guru dan Orang Tua disatukan menjadi peran 'teacher' (EduAdmin)
+      const isTeacherOrParent =
+        loginRole === 'teacher' ||
+        backendRole === 'teacher' ||
+        backendRole === 'parent' ||
+        backendRole.includes('guru') ||
+        backendRole.includes('pendidik') ||
+        backendRole.includes('orang tua') ||
+        backendRole.includes('ortu');
 
-      const finalRole = isTeacher ? 'teacher' : isParent ? 'parent' : 'student';
-      const userRoleNormalized = isTeacher ? 'guru' : isParent ? 'orang tua' : 'siswa';
-      const userName = data.user?.name || (userRoleNormalized === 'guru' ? 'Bapak/Ibu Guru' : 'Kadet');
+      const finalRole = isTeacherOrParent ? 'teacher' : 'student';
+      const userRoleNormalized = isTeacherOrParent ? 'guru' : 'siswa';
+      const userName = data.user?.name || (isTeacherOrParent ? 'Bapak/Ibu Guru & Orang Tua' : 'Kadet');
 
       const userObject = {
         ...data.user,
         role: finalRole,
         name: userName,
-        grade: isTeacher ? 'Pendidik Sains SD' : isParent ? 'Wali Murid SD' : (data.user?.grade || 'Kelas 5 SD'),
+        grade: isTeacherOrParent ? 'Pendidik / Orang Tua SD' : (data.user?.grade || 'Kelas 5 SD'),
       };
 
       localStorage.setItem('token', data.token || 'auth-token');
@@ -88,9 +93,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
       const successNotice =
         finalRole === 'teacher'
-          ? `Selamat Datang di Portal EduAdmin Guru, ${userName}! 👨‍🏫`
-          : finalRole === 'parent'
-          ? `Selamat Datang di Portal Orang Tua, ${userName}! 👩‍👦`
+          ? `Selamat Datang di Portal EduAdmin Guru & Orang Tua, ${userName}! 👨‍🏫👩‍👦`
           : `Selamat Datang di Stasiun Bintang Edu, ${userName}! 🚀`;
       setSuccessMessage(successNotice);
       if (onNotify) onNotify(successNotice);
@@ -101,16 +104,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       }, 150);
     } catch (err: any) {
       if (err.name === 'TypeError' || err.message?.includes('fetch') || err.message?.includes('Network')) {
-        const isTeacher = loginRole === 'teacher';
-        const isParent = !isTeacher && loginRole === 'parent';
-        const finalRole = isTeacher ? 'teacher' : isParent ? 'parent' : 'student';
-        const userRoleNormalized = isTeacher ? 'guru' : isParent ? 'orang tua' : 'siswa';
+        const isTeacherOrParent = loginRole === 'teacher';
+        const finalRole = isTeacherOrParent ? 'teacher' : 'student';
+        const userRoleNormalized = isTeacherOrParent ? 'guru' : 'siswa';
         const fallbackUser = {
           id: Date.now(),
-          name: isTeacher ? 'Bapak/Ibu Guru' : isParent ? 'Wali Murid' : 'Kadet Pengguna',
+          name: isTeacherOrParent ? 'Bapak/Ibu Guru & Orang Tua' : 'Kadet Pengguna',
           email,
           role: finalRole,
-          grade: isTeacher ? 'Pendidik Sains SD' : isParent ? 'Wali Murid SD' : 'Kelas 5 SD',
+          grade: isTeacherOrParent ? 'Pendidik / Orang Tua SD' : 'Kelas 5 SD',
         };
         localStorage.setItem('token', 'local-token');
         localStorage.setItem('user', JSON.stringify(fallbackUser));
@@ -269,11 +271,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 <label className="mb-1.5 block font-body text-xs font-bold text-indigo-950">
                   Masuk Sebagai
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setLoginRole('student')}
-                    className={`rounded-xl border-2 py-2 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`rounded-xl border-2 py-2.5 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       loginRole === 'student'
                         ? 'border-purple-600 bg-purple-50 text-purple-700 shadow-sm'
                         : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
@@ -285,26 +287,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setLoginRole('teacher')}
-                    className={`rounded-xl border-2 py-2 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`rounded-xl border-2 py-2.5 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       loginRole === 'teacher'
                         ? 'border-purple-600 bg-purple-50 text-purple-700 shadow-sm'
                         : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
                     <Icon icon="lucide:book-open" className="h-4 w-4" />
-                    <span>Guru</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLoginRole('parent')}
-                    className={`rounded-xl border-2 py-2 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                      loginRole === 'parent'
-                        ? 'border-purple-600 bg-purple-50 text-purple-700 shadow-sm'
-                        : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    <Icon icon="lucide:heart-handshake" className="h-4 w-4" />
-                    <span>Orang Tua</span>
+                    <span>Guru / Orang Tua</span>
                   </button>
                 </div>
               </div>
