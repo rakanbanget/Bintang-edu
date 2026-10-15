@@ -53,8 +53,8 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`\n🌟 Bintang Edu Backend running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🌟 Bintang Edu Backend running on port ${PORT} (0.0.0.0)`);
   console.log(`   Auth   : POST /api/auth/register | POST /api/auth/login`);
   console.log(`   Survey : POST /api/students/survey`);
   console.log(`   Groups : POST /api/groups | POST /api/groups/join | GET /api/groups/:id/progress`);
