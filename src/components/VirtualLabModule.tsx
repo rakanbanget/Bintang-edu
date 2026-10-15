@@ -8,7 +8,7 @@ export type SidebarNavKey =
   | 'Tantangan'
   | 'Peringkat';
 
-export type StationId = 'water-cycle' | 'solar-system' | 'photosynthesis';
+export type StationId = 'water-cycle' | 'solar-system' | 'photosynthesis' | 'human-anatomy';
 type QuestStep = 1 | 2 | 3;
 
 export interface VirtualLabModuleProps {
@@ -81,8 +81,32 @@ interface StationCatalogItem {
 
 const STATION_CATALOG: StationCatalogItem[] = [
   {
-    id: 'water-cycle',
+    id: 'human-anatomy',
     code: 'STASIUN 01',
+    title: 'Anatomi & Panca Indra',
+    subtitle: 'Mata, Telinga, Lidah & Saraf Kulit',
+    topic: 'Reseptor Cahaya, Suara & Rasa',
+    icon: 'solar:eye-bold-duotone',
+    iconBg: 'from-rose-500 via-pink-600 to-amber-600',
+    accentText: 'text-rose-600',
+    rewardStars: 100,
+    rewardXp: 60,
+  },
+  {
+    id: 'photosynthesis',
+    code: 'STASIUN 02',
+    title: 'Kebun Tumbuhan & Ekosistem',
+    subtitle: 'Fotosintesis & Rantai Makanan',
+    topic: 'Klorofil, O₂, & Siklus Energi',
+    icon: 'solar:leaf-bold-duotone',
+    iconBg: 'from-emerald-500 via-teal-600 to-indigo-700',
+    accentText: 'text-emerald-600',
+    rewardStars: 100,
+    rewardXp: 70,
+  },
+  {
+    id: 'water-cycle',
+    code: 'STASIUN 03',
     title: 'Panci Ajaib Air',
     subtitle: 'Eksperimen Siklus Air & Kalor',
     topic: 'Membeku, Mencair & Menguap',
@@ -94,25 +118,13 @@ const STATION_CATALOG: StationCatalogItem[] = [
   },
   {
     id: 'solar-system',
-    code: 'STASIUN 02',
+    code: 'STASIUN 04',
     title: 'Gravitasi Planet',
     subtitle: 'Simulasi Orbit & Tarikan Galaksi',
     topic: 'Bumi, Mars & Raksasa Jupiter',
     icon: 'solar:planet-3-bold-duotone',
     iconBg: 'from-indigo-600 via-violet-600 to-purple-700',
     accentText: 'text-indigo-600',
-    rewardStars: 100,
-    rewardXp: 50,
-  },
-  {
-    id: 'photosynthesis',
-    code: 'STASIUN 03',
-    title: 'Kebun Ajaib Sains',
-    subtitle: 'Fotosintesis & Oksigen Tumbuhan',
-    topic: 'Cahaya, Air & Udara CO₂',
-    icon: 'solar:leaf-bold-duotone',
-    iconBg: 'from-emerald-500 via-teal-600 to-indigo-700',
-    accentText: 'text-emerald-600',
     rewardStars: 100,
     rewardXp: 50,
   },
@@ -268,11 +280,28 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
   });
 
   // ============================================================================
-  // STATE EKSPERIMEN 3: KEBUN AJAIB TUMBUHAN (FOTOSINTESIS)
+  // STATE EKSPERIMEN 3: KEBUN AJAIB TUMBUHAN & EKOSISTEM (FOTOSINTESIS & RANTAI MAKANAN)
   // ============================================================================
   const [sunLevel, setSunLevel] = useState<number>(20);
   const [waterLevel, setWaterLevel] = useState<number>(20);
   const [airCo2Level, setAirCo2Level] = useState<number>(20);
+  const [activePlantTab, setActivePlantTab] = useState<'photosynthesis' | 'food-chain'>('photosynthesis');
+  const [selectedTrophicLevel, setSelectedTrophicLevel] = useState<number>(0);
+  const [isEcosystemBalanced, setIsEcosystemBalanced] = useState<boolean>(true);
+
+  // ============================================================================
+  // STATE EKSPERIMEN 4: ANATOMI TUBUH & PANCA INDRA MANUSIA
+  // ============================================================================
+  const [activeSenseTab, setActiveSenseTab] = useState<'eye' | 'ear' | 'tongue' | 'skin'>('eye');
+  // Eye experiment (Pupil reflex against light)
+  const [eyeLightLevel, setEyeLightLevel] = useState<number>(30); // 10% to 100%
+  // Ear experiment (Frequency resonance & eardrum vibration)
+  const [soundFrequency, setSoundFrequency] = useState<'low' | 'mid' | 'high'>('mid');
+  const [isEarVibrating, setIsEarVibrating] = useState<boolean>(false);
+  // Tongue experiment (5 basic tastes on papillae zones)
+  const [selectedTaste, setSelectedTaste] = useState<'sweet' | 'salty' | 'sour' | 'bitter' | 'umami'>('sweet');
+  // Skin experiment (Sensory dermis receptors)
+  const [selectedSkinStimulus, setSelectedSkinStimulus] = useState<'cold' | 'touch' | 'heat' | 'pressure'>('touch');
 
   const showToast = (msg: string) => {
     setToastFeedback(msg);
@@ -322,6 +351,14 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
       setSunLevel(20);
       setWaterLevel(20);
       setAirCo2Level(20);
+      setActivePlantTab('photosynthesis');
+    } else if (station === 'human-anatomy') {
+      setEyeLightLevel(30);
+      setSoundFrequency('mid');
+      setIsEarVibrating(false);
+      setSelectedTaste('sweet');
+      setSelectedSkinStimulus('touch');
+      setActiveSenseTab('eye');
     }
   };
 
@@ -395,6 +432,24 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
       }
     }
   }, [sunLevel, waterLevel, airCo2Level, currentStep, completedSteps, selectedStation]);
+
+  useEffect(() => {
+    if (selectedStation === 'human-anatomy') {
+      if (currentStep === 1 && (eyeLightLevel >= 75 || eyeLightLevel <= 25) && !completedSteps[1]) {
+        setCompletedSteps((prev) => ({ ...prev, 1: true }));
+        showToast('Langkah 1 berhasil! Pupil mata merespons intensitas cahaya dengan adaptif.');
+      }
+      if (currentStep === 2 && isEarVibrating && !completedSteps[2]) {
+        setCompletedSteps((prev) => ({ ...prev, 2: true }));
+        showToast('Langkah 2 berhasil! Gendang telinga bergetar menangkap frekuensi gelombang bunyi.');
+      }
+      if (currentStep === 3 && (activeSenseTab === 'tongue' || activeSenseTab === 'skin') && !completedSteps[3]) {
+        setCompletedSteps((prev) => ({ ...prev, 3: true }));
+        setShowRewardPopup(true);
+        showToast('Luar biasa! Seluruh panca indra dan reseptor saraf berhasil dieksplorasi!');
+      }
+    }
+  }, [eyeLightLevel, isEarVibrating, activeSenseTab, currentStep, completedSteps, selectedStation]);
 
   // Continuous thermal adjustment when Cooling or Heating is active
   useEffect(() => {
@@ -1107,11 +1162,20 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
       setDropProgress(0);
       setTestedPlanets({ earth: false, mars: false, jupiter: false });
       showToast('Simulasi Gravitasi direset ke Langkah 1.');
-    } else {
+    } else if (selectedStation === 'photosynthesis') {
       setSunLevel(20);
       setWaterLevel(20);
       setAirCo2Level(20);
-      showToast('Simulasi Fotosintesis direset ke Langkah 1.');
+      setActivePlantTab('photosynthesis');
+      showToast('Simulasi Fotosintesis & Ekosistem direset ke Langkah 1.');
+    } else if (selectedStation === 'human-anatomy') {
+      setEyeLightLevel(30);
+      setSoundFrequency('mid');
+      setIsEarVibrating(false);
+      setSelectedTaste('sweet');
+      setSelectedSkinStimulus('touch');
+      setActiveSenseTab('eye');
+      showToast('Laboratorium Anatomi & Sensorik direset ke Langkah 1.');
     }
   };
 
@@ -1284,7 +1348,7 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
       ];
 
       return {
-        stationCode: 'STASIUN EKSPERIMEN 01',
+        stationCode: 'STASIUN EKSPERIMEN 03',
         stationTitle: 'Panci Ajaib Sains · Siklus Air & Kalor',
         stationDesc: 'Eksplorasi perubahan wujud molekul air: Padat, Cair, dan Gas.',
         audioNarration:
@@ -1438,7 +1502,7 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
       ];
 
       return {
-        stationCode: 'STASIUN EKSPERIMEN 02',
+        stationCode: 'STASIUN EKSPERIMEN 04',
         stationTitle: 'Tata Surya & Perbandingan Gravitasi Planet',
         stationDesc: 'Bandingkan waktu jatuh benda di Bumi, Mars, dan planet monster Jupiter.',
         audioNarration:
@@ -1470,7 +1534,143 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
       };
     }
 
-    // photosynthesis
+    if (selectedStation === 'human-anatomy') {
+      let dynamicTitle = '';
+      let dynamicInstruction = '';
+      let dynamicIsAchieved = false;
+
+      if (currentStep === 1) {
+        if (eyeLightLevel >= 75 || eyeLightLevel <= 25) {
+          dynamicTitle = 'Refleks Pupil Mata Teruji Sempurna! 👁️✨';
+          dynamicInstruction = `Hebat Kadet Penjelajah 🚀! Pupil mata bereaksi terhadap cahaya (${eyeLightLevel}%): ${
+            eyeLightLevel >= 75
+              ? 'mengecil (miosis) melindungi retina dari silau berlebih'
+              : 'melebar (midriasis) menangkap cahaya lebih banyak di ruang redup'
+          }. Misi 1 tuntas!`;
+          dynamicIsAchieved = true;
+        } else {
+          dynamicTitle = 'Misi 1: Uji Respon Pupil Mata terhadap Cahaya! 👁️';
+          dynamicInstruction =
+            'Kadet! Geser intensitas cahaya atau klik tombol [Senter Terang] (≥75%) atau [Ruang Redup] (≤25%) untuk melihat perubahan ukuran pupil mata!';
+          dynamicIsAchieved = false;
+        }
+      } else if (currentStep === 2) {
+        if (isEarVibrating) {
+          dynamicTitle = 'Gendang Telinga Menangkap Gelombang Bunyi! 👂🎵';
+          dynamicInstruction = `Luar biasa Kadet! Getaran frekuensi suara menggetarkan membran timpani dan diteruskan rumah siput (koklea) ke otak! Misi 2 tuntas!`;
+          dynamicIsAchieved = true;
+        } else {
+          dynamicTitle = 'Misi 2: Getarkan Gendang Telinga dengan Frekuensi Bunyi! 👂';
+          dynamicInstruction =
+            'Buka tab [Telinga & Bunyi], lalu klik tombol [Bunyikan Garpu Tala] untuk mengamati gelombang suara dan getaran membran telinga!';
+          dynamicIsAchieved = false;
+        }
+      } else {
+        if (completedSteps[3]) {
+          dynamicTitle = 'Reseptor Lidah & Saraf Kulit Sukses Dipetakan! 👅🖐️';
+          dynamicInstruction =
+            'Fantastis Kadet Penjelajah 🚀! Kamu telah memahami 5 zona rasa papila lidah dan cara reseptor sentuhan dermis mengirimkan impuls ke otak. Semua misi tuntas!';
+          dynamicIsAchieved = true;
+        } else {
+          dynamicTitle = 'Misi 3: Eksplorasi Indra Pengecap Lidah & Reseptor Kulit! 👅🖐️';
+          dynamicInstruction =
+            'Pilih tab [Lidah & 5 Rasa] atau [Kulit & Reseptor], lalu uji salah satu rasa makanan atau jenis rangsangan kulit!';
+          dynamicIsAchieved = false;
+        }
+      }
+
+      const steps = [
+        {
+          step: 1 as QuestStep,
+          shortLabel: 'Pupil Mata 👁️',
+          subLabel: 'Refleks Cahaya',
+          title: 'Langkah 1: Respon Pupil Mata',
+          instruction:
+            'Uji bagaimana pupil mata membesar di ruang gelap dan mengecil saat terkena cahaya terang.',
+          successMsg:
+            'Langkah 1 selesai! Refleks pupil mata bekerja melindungi retina dari silau! 👁️✨',
+          targetBadge: 'Cahaya: ≥ 75% atau ≤ 25%',
+          quickHintAction: () => setEyeLightLevel(90),
+          quickHintLabel: 'Nyalakan Senter 90% 💡',
+          dynamicTitle,
+          dynamicInstruction,
+          dynamicIsAchieved,
+        },
+        {
+          step: 2 as QuestStep,
+          shortLabel: 'Gendang Telinga 👂',
+          subLabel: 'Resonansi Bunyi',
+          title: 'Langkah 2: Getaran Bunyi di Telinga',
+          instruction:
+            'Bunyikan frekuensi suara untuk melihat gelombang bunyi menggetarkan gendang telinga dan rumah siput koklea.',
+          successMsg:
+            'Langkah 2 selesai! Gendang telinga dan tulang pendengaran beresonansi dengan gelombang bunyi! 👂🎵',
+          targetBadge: 'Frekuensi: Aktifkan Bunyi',
+          quickHintAction: () => {
+            setActiveSenseTab('ear');
+            setIsEarVibrating(true);
+          },
+          quickHintLabel: 'Bunyikan Frekuensi 🔊',
+          dynamicTitle,
+          dynamicInstruction,
+          dynamicIsAchieved,
+        },
+        {
+          step: 3 as QuestStep,
+          shortLabel: 'Lidah & Kulit 👅',
+          subLabel: 'Reseptor Sensorik',
+          title: 'Langkah 3: Pengecap Lidah & Reseptor Saraf Kulit',
+          instruction:
+            'Uji persepsi 5 rasa pada papila lidah serta reseptor raba dan suhu pada lapisan dermis kulit.',
+          successMsg:
+            'Semua Misi Anatomi Tuntas! 🎉 Reseptor sensorik mengirim impuls listrik ke otak dengan sempurna!',
+          targetBadge: 'Uji: Coba Rasa / Sentuhan',
+          quickHintAction: () => {
+            setActiveSenseTab('tongue');
+            setSelectedTaste('sweet');
+          },
+          quickHintLabel: 'Cicipi Madu Manis 🍯',
+          dynamicTitle,
+          dynamicInstruction,
+          dynamicIsAchieved,
+        },
+      ];
+
+      return {
+        stationCode: 'STASIUN EKSPERIMEN 01',
+        stationTitle: 'Anatomi & Panca Indra Manusia · Laboratorium Sensorik',
+        stationDesc:
+          'Eksplorasi sensorik: pupil mata, resonansi gendang telinga, pengecap lidah, dan saraf kulit.',
+        audioNarration:
+          'Halo Kadet Penjelajah 🚀! Tubuh manusia adalah ciptaan paling luar biasa! Panca indra adalah jendela kita melihat dan merasakan indahnya alam semesta. Mata kita mengatur cahaya seperti kamera pintar. Telinga menangkap getaran suara udara. Lidah membedakan ribuan rasa lezat makanan, dan kulit merasakan sentuhan dan suhu hangat. Mari kita amati bagaimana sinyal saraf bekerja!',
+        funFacts: [
+          {
+            icon: '👁️',
+            title: 'Kamera Pintar Alami',
+            desc: 'Pupil matamu bisa berubah ukuran dalam sepersekian detik berkat otot sfingter iris yang otomatis melindungi retina dari silau!',
+          },
+          {
+            icon: '👂',
+            title: 'Tulang Terkecil Tubuh',
+            desc: 'Di dalam telingamu ada 3 tulang terkecil manusia: tulang martil, landasan, dan sanggurdi yang memperkuat getaran suara hingga 20 kali lipat!',
+          },
+          {
+            icon: '👅',
+            title: 'Ribuan Tunas Pengecap',
+            desc: 'Lidah kita memiliki sekitar 10.000 kuncup pengecap yang berganti sel baru setiap 1-2 minggu agar kita selalu bisa merasakan lezatnya makanan!',
+          },
+          {
+            icon: '🖐️',
+            title: 'Jutaan Sensor Pelindung',
+            desc: 'Kulit manusia memiliki jutaan sel reseptor yang mengirimkan sinyal rasa sakit, sentuhan lembut, dingin, dan panas ke otak secepat 100 meter per detik!',
+          },
+        ],
+        steps,
+        active: steps[currentStep - 1],
+      };
+    }
+
+    // photosynthesis & food chain
     let dynamicTitle = '';
     let dynamicInstruction = '';
     let dynamicIsAchieved = false;
@@ -1567,9 +1767,9 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
     ];
 
     return {
-      stationCode: 'STASIUN EKSPERIMEN 03',
-      stationTitle: 'Kebun Ajaib · Simulasi Fotosintesis Tumbuhan',
-      stationDesc: 'Bantu koki daun meramu sinar matahari, air, dan CO₂ menjadi Oksigen.',
+      stationCode: 'STASIUN EKSPERIMEN 02',
+      stationTitle: 'Kebun Tumbuhan & Ekosistem Hewan · Fotosintesis & Rantai Makanan',
+      stationDesc: 'Bantu koki daun meramu fotosintesis dan amati aliran energi rantai makanan.',
       audioNarration:
         'Panggilan untuk Kadet Penjelajah 🚀! Tumbuhan adalah pahlawan super bumi! Mereka tidak punya kompor, tapi bisa memasak makanan sendiri menggunakan sinar matahari, air tanah, dan udara CO₂. Yang paling hebat, saat memasak, mereka memberi kita bonus gas Oksigen segar untuk bernapas! Hebat kan teman hijau kita?',
       funFacts: [
@@ -1889,7 +2089,9 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-sky-400 text-white shadow-md border border-white/20">
                         <Icon
                           icon={
-                            selectedStation === 'water-cycle'
+                            selectedStation === 'human-anatomy'
+                              ? 'solar:eye-bold-duotone'
+                              : selectedStation === 'water-cycle'
                               ? 'solar:waterdrops-bold-duotone'
                               : selectedStation === 'solar-system'
                               ? 'solar:planet-3-bold-duotone'
@@ -1914,6 +2116,39 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
                     </div>
 
                     {/* Indikator Real-time di Pojok Kanan Header */}
+                    {selectedStation === 'human-anatomy' && (
+                      <div className="flex items-center gap-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2.5">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500 text-white">
+                          <Icon
+                            icon={
+                              activeSenseTab === 'eye'
+                                ? 'solar:eye-bold-duotone'
+                                : activeSenseTab === 'ear'
+                                ? 'solar:volume-loud-bold-duotone'
+                                : activeSenseTab === 'tongue'
+                                ? 'solar:cup-bold-duotone'
+                                : 'solar:hand-shake-bold-duotone'
+                            }
+                            className="text-xl"
+                          />
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-rose-200">
+                            Sensorik Aktif
+                          </div>
+                          <div className="text-sm font-extrabold text-rose-300 leading-none mt-0.5">
+                            {activeSenseTab === 'eye'
+                              ? 'Pupil Mata 👁️'
+                              : activeSenseTab === 'ear'
+                              ? 'Getaran Telinga 👂'
+                              : activeSenseTab === 'tongue'
+                              ? 'Pengecap Lidah 👅'
+                              : 'Reseptor Kulit 🖐️'}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {selectedStation === 'water-cycle' && (
                       <div className="flex items-center gap-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2.5">
                         <div
@@ -1955,10 +2190,14 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
                         </div>
                         <div>
                           <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-200">
-                            Status Tanaman
+                            Status Tanaman & Ekosistem
                           </div>
                           <div className="text-sm font-extrabold text-emerald-300 leading-none mt-0.5">
-                            {isPlantBlooming ? 'Mekar Optimal' : 'Tahap Nutrisi'}
+                            {activePlantTab === 'food-chain'
+                              ? 'Piramida Energi'
+                              : isPlantBlooming
+                              ? 'Mekar Optimal'
+                              : 'Tahap Nutrisi'}
                           </div>
                         </div>
                       </div>
@@ -2272,94 +2511,867 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
                 )}
 
                 {/* ===========================================================
-                    3C. ISI WORKBENCH STASIUN 3: KEBUN AJAIB (FOTOSINTESIS)
+                    3C. ISI WORKBENCH STASIUN 2: KEBUN AJAIB & EKOSISTEM
                 =========================================================== */}
                 {selectedStation === 'photosynthesis' && (
                   <div className="p-5 sm:p-6 space-y-5">
-                    <div
-                      className={`rounded-2xl p-5 border transition-colors duration-500 flex flex-col items-center justify-between min-h-[250px] relative overflow-hidden ${
-                        sunLevel >= 75
-                          ? 'bg-gradient-to-b from-sky-50 via-emerald-50/60 to-amber-50/70 border-emerald-200'
-                          : 'bg-gradient-to-b from-slate-100 via-slate-50 to-amber-50/40 border-slate-200'
-                      }`}
-                    >
-                      <div className="w-full flex flex-wrap items-center justify-between gap-3 text-xs font-bold text-slate-700 z-10">
-                        <span>☀️ Cahaya Surya: {sunLevel}%</span>
-                        <span>💧 Kelembapan Air: {waterLevel}%</span>
-                        <span>🌬️ Kadar CO₂: {airCo2Level}%</span>
-                      </div>
-
-                      <div className="my-4 text-center">
-                        <div className="text-6xl transition-transform duration-500">
-                          {isPlantBlooming
-                            ? '🌻'
-                            : sunLevel >= 75 || waterLevel >= 75
-                            ? '🌿'
-                            : '🌱'}
-                        </div>
-                        {isPlantBlooming && (
-                          <p className="mt-2 text-xs font-extrabold text-emerald-700">
-                            🫧 Gelembung Oksigen (O₂) Terbentuk Optimal
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="w-full bg-white/90 rounded-xl px-4 py-2 text-center text-xs font-semibold text-slate-600 border border-slate-200/80">
-                        {isPlantBlooming
-                          ? 'Fotosintesis berlangsung sempurna! Tanaman menghasilkan glukosa dan Oksigen.'
-                          : 'Atur tingkat Cahaya, Air, dan Udara CO₂ hingga minimal 75% secara bertahap.'}
-                      </div>
-                    </div>
-
-                    {/* Tombol Kontrol Proporsional (rounded-xl) */}
-                    <div className="rounded-2xl bg-slate-50/90 border border-slate-200/80 p-4 flex flex-wrap items-center justify-between gap-2.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setSunLevel((v) => Math.min(100, v + 30))}
-                          className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 transition-all cursor-pointer"
-                        >
-                          <Icon icon="solar:sun-2-bold-duotone" className="text-base" />
-                          <span>Tambah Cahaya</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setWaterLevel((v) => Math.min(100, v + 30))}
-                          className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold bg-white hover:bg-sky-50 text-sky-700 border border-sky-200 transition-all cursor-pointer"
-                        >
-                          <Icon
-                            icon="solar:waterdrops-bold-duotone"
-                            className="text-base"
-                          />
-                          <span>Siram Air</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setAirCo2Level((v) => Math.min(100, v + 30))}
-                          className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 transition-all cursor-pointer"
-                        >
-                          <Icon icon="solar:wind-bold-duotone" className="text-base" />
-                          <span>Beri Udara CO₂</span>
-                        </button>
-                      </div>
-
+                    {/* Sub-tab Switcher: Fotosintesis vs Rantai Makanan & Siklus Energi */}
+                    <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/90">
                       <button
                         type="button"
-                        onClick={handleResetExperiment}
-                        className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200/90 transition-all cursor-pointer"
+                        onClick={() => setActivePlantTab('photosynthesis')}
+                        className={`flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                          activePlantTab === 'photosynthesis'
+                            ? 'bg-white text-emerald-700 shadow-xs border border-slate-200'
+                            : 'text-slate-600 hover:text-emerald-700'
+                        }`}
                       >
-                        <Icon icon="solar:restart-bold-duotone" className="text-base" />
-                        <span>Ulangi</span>
+                        <Icon icon="solar:leaf-bold-duotone" className="text-base text-emerald-600" />
+                        <span>🌱 Dapur Fotosintesis Klorofil</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActivePlantTab('food-chain')}
+                        className={`flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                          activePlantTab === 'food-chain'
+                            ? 'bg-white text-indigo-700 shadow-xs border border-slate-200'
+                            : 'text-slate-600 hover:text-indigo-700'
+                        }`}
+                      >
+                        <Icon icon="solar:graph-up-bold-duotone" className="text-base text-indigo-600" />
+                        <span>🦅 Rantai Makanan & Siklus Energi</span>
                       </button>
                     </div>
+
+                    {activePlantTab === 'photosynthesis' ? (
+                      /* TAB 1: SIMULASI FOTOSINTESIS KLOROFIL DAUN */
+                      <>
+                        <div
+                          className={`rounded-2xl p-5 border transition-colors duration-500 flex flex-col items-center justify-between min-h-[250px] relative overflow-hidden ${
+                            sunLevel >= 75
+                              ? 'bg-gradient-to-b from-sky-50 via-emerald-50/60 to-amber-50/70 border-emerald-200'
+                              : 'bg-gradient-to-b from-slate-100 via-slate-50 to-amber-50/40 border-slate-200'
+                          }`}
+                        >
+                          <div className="w-full flex flex-wrap items-center justify-between gap-3 text-xs font-bold text-slate-700 z-10">
+                            <span className="bg-white/80 px-2.5 py-1 rounded-lg border border-amber-200/80">☀️ Cahaya Surya: {sunLevel}%</span>
+                            <span className="bg-white/80 px-2.5 py-1 rounded-lg border border-sky-200/80">💧 Kelembapan Air: {waterLevel}%</span>
+                            <span className="bg-white/80 px-2.5 py-1 rounded-lg border border-emerald-200/80">🌬️ Kadar CO₂: {airCo2Level}%</span>
+                          </div>
+
+                          <div className="my-4 text-center">
+                            <div className="text-6xl transition-transform duration-500 hover:scale-110">
+                              {isPlantBlooming
+                                ? '🌻'
+                                : sunLevel >= 75 || waterLevel >= 75
+                                ? '🌿'
+                                : '🌱'}
+                            </div>
+                            {isPlantBlooming && (
+                              <p className="mt-2 text-xs font-extrabold text-emerald-700 animate-pulse">
+                                🫧 Gelembung Oksigen (O₂) & Glukosa Murni Terbentuk!
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="w-full bg-white/90 rounded-xl px-4 py-2.5 text-center text-xs font-semibold text-slate-700 border border-slate-200/80">
+                            {isPlantBlooming
+                              ? '🎉 Fotosintesis sempurna: 6CO₂ + 6H₂O + Foton Surya ➔ C₆H₁₂O₆ (Glukosa) + 6O₂ (Oksigen)'
+                              : 'Atur intensitas Cahaya Surya, Air, dan Udara CO₂ hingga minimal 75% untuk mengaktifkan klorofil.'}
+                          </div>
+                        </div>
+
+                        {/* Kontrol Fotosintesis */}
+                        <div className="rounded-2xl bg-slate-50/90 border border-slate-200/80 p-4 flex flex-wrap items-center justify-between gap-2.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setSunLevel((v) => Math.min(100, v + 30))}
+                              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 transition-all cursor-pointer"
+                            >
+                              <Icon icon="solar:sun-2-bold-duotone" className="text-base" />
+                              <span>Tambah Cahaya</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setWaterLevel((v) => Math.min(100, v + 30))}
+                              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold bg-white hover:bg-sky-50 text-sky-700 border border-sky-200 transition-all cursor-pointer"
+                            >
+                              <Icon icon="solar:waterdrops-bold-duotone" className="text-base" />
+                              <span>Siram Air</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setAirCo2Level((v) => Math.min(100, v + 30))}
+                              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 transition-all cursor-pointer"
+                            >
+                              <Icon icon="solar:wind-bold-duotone" className="text-base" />
+                              <span>Beri Udara CO₂</span>
+                            </button>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={handleResetExperiment}
+                            className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200/90 transition-all cursor-pointer"
+                          >
+                            <Icon icon="solar:restart-bold-duotone" className="text-base" />
+                            <span>Ulangi</span>
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      /* TAB 2: SIMULASI RANTAI MAKANAN & SIKLUS ENERGI EKOSISTEM */
+                      <div className="space-y-4">
+                        <div className="rounded-2xl p-4 bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white border border-indigo-500/20 shadow-md">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl">☀️</span>
+                              <div>
+                                <h4 className="text-xs sm:text-sm font-extrabold text-amber-300">
+                                  Aliran Energi 10% (Hukum Lindeman)
+                                </h4>
+                                <p className="text-[11px] text-slate-300">
+                                  Hanya 10% energi kimia yang berpindah ke tingkatan trofik berikutnya!
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setIsEcosystemBalanced((b) => !b)}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                                isEcosystemBalanced
+                                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40'
+                                  : 'bg-rose-500/20 text-rose-300 border-rose-400/40'
+                              }`}
+                            >
+                              {isEcosystemBalanced ? '✓ Ekosistem Seimbang' : '⚠️ Gangguan Populasi'}
+                            </button>
+                          </div>
+
+                          {/* Tingkatan Trofik Ekosistem Horizontal Flow */}
+                          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                            {[
+                              {
+                                level: 0,
+                                tag: 'Produsen 🌾',
+                                name: 'Padi & Rumput',
+                                energy: '10.000 kkal',
+                                role: 'Fotosintesis Surya',
+                                color: 'border-emerald-400/50 bg-emerald-950/40 text-emerald-200',
+                              },
+                              {
+                                level: 1,
+                                tag: 'Konsumen I 🦗',
+                                name: 'Belalang Daun',
+                                energy: '1.000 kkal',
+                                role: 'Herbivora',
+                                color: 'border-lime-400/50 bg-lime-950/40 text-lime-200',
+                              },
+                              {
+                                level: 2,
+                                tag: 'Konsumen II 🐸',
+                                name: 'Katak Sawah',
+                                energy: '100 kkal',
+                                role: 'Karnivora Kecil',
+                                color: 'border-amber-400/50 bg-amber-950/40 text-amber-200',
+                              },
+                              {
+                                level: 3,
+                                tag: 'Konsumen Puncak 🦅',
+                                name: 'Burung Elang',
+                                energy: '10 kkal',
+                                role: 'Predator Puncak',
+                                color: 'border-rose-400/50 bg-rose-950/40 text-rose-200',
+                              },
+                              {
+                                level: 4,
+                                tag: 'Pengurai 🍄',
+                                name: 'Jamur & Bakteri',
+                                energy: 'Humus Tanah',
+                                role: 'Dekomposer',
+                                color: 'border-purple-400/50 bg-purple-950/40 text-purple-200',
+                              },
+                            ].map((item) => {
+                              const isSelected = selectedTrophicLevel === item.level;
+                              return (
+                                <button
+                                  key={item.level}
+                                  type="button"
+                                  onClick={() => setSelectedTrophicLevel(item.level)}
+                                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${item.color} ${
+                                    isSelected
+                                      ? 'ring-2 ring-amber-300 scale-102 shadow-lg'
+                                      : 'hover:opacity-90'
+                                  }`}
+                                >
+                                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-300">
+                                    {item.tag}
+                                  </div>
+                                  <div className="font-extrabold text-xs sm:text-sm text-white mt-0.5 truncate">
+                                    {item.name}
+                                  </div>
+                                  <div className="text-[11px] font-bold text-amber-300 mt-1">
+                                    {item.energy}
+                                  </div>
+                                  <div className="text-[10px] text-slate-300 mt-0.5">
+                                    {item.role}
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Penjelasan Detail Tingkatan Trofik yang Dipilih */}
+                        <div className="rounded-2xl bg-white border border-slate-200/90 p-4 shadow-2xs">
+                          {selectedTrophicLevel === 0 && (
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">🌾</span>
+                                <h5 className="font-extrabold text-sm text-slate-900">
+                                  Tingkat Trofik 1: Produsen (Tumbuhan Hijau & Padi)
+                                </h5>
+                              </div>
+                              <p className="text-xs text-slate-600 leading-relaxed">
+                                Tumbuhan hijau menangkap energi matahari dan mengubahnya menjadi molekul glukosa berkadar 10.000 kkal. Tumbuhan adalah produsen utama yang menopang seluruh makhluk hidup di daratan.
+                              </p>
+                              <div className="bg-emerald-50 rounded-xl p-2.5 text-[11px] text-emerald-800 font-bold border border-emerald-200">
+                                💡 Fakta Sains: Tanpa klorofil daun yang berfotosintesis, tidak akan ada oksigen dan makanan untuk herbivora maupun manusia!
+                              </div>
+                            </div>
+                          )}
+                          {selectedTrophicLevel === 1 && (
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">🦗</span>
+                                <h5 className="font-extrabold text-sm text-slate-900">
+                                  Tingkat Trofik 2: Konsumen I (Herbivora · Belalang)
+                                </h5>
+                              </div>
+                              <p className="text-xs text-slate-600 leading-relaxed">
+                                Belalang memakan dedaunan padi. Dari 10.000 kkal energi daun, hanya sekitar 1.000 kkal (10%) yang tersimpan dalam jaringan tubuh belalang. Sisanya 90% terbuang untuk bergerak, bernapas, dan energi panas tubuh.
+                              </p>
+                              <div className="bg-lime-50 rounded-xl p-2.5 text-[11px] text-lime-800 font-bold border border-lime-200">
+                                💡 Fakta Sains: Hewan herbivora memiliki saluran pencernaan yang lebih panjang untuk mencerna dinding sel selulosa tumbuhan.
+                              </div>
+                            </div>
+                          )}
+                          {selectedTrophicLevel === 2 && (
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">🐸</span>
+                                <h5 className="font-extrabold text-sm text-slate-900">
+                                  Tingkat Trofik 3: Konsumen II (Karnivora · Katak Sawah)
+                                </h5>
+                              </div>
+                              <p className="text-xs text-slate-600 leading-relaxed">
+                                Katak menangkap belalang dengan lidah lengketnya. Katak hanya menerima 100 kkal energi. Katak berperan penting menjaga keseimbangan alam agar sawah tidak diserang hama belalang secara berlebihan.
+                              </p>
+                              <div className="bg-amber-50 rounded-xl p-2.5 text-[11px] text-amber-800 font-bold border border-amber-200">
+                                💡 Fakta Sains: Jika petani menyemprot pestisida berlebihan dan katak mati, populasi belalang justru bisa kebal dan melonjak merusak panen!
+                              </div>
+                            </div>
+                          )}
+                          {selectedTrophicLevel === 3 && (
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">🦅</span>
+                                <h5 className="font-extrabold text-sm text-slate-900">
+                                  Tingkat Trofik 4: Konsumen Puncak (Predator Apex · Elang)
+                                </h5>
+                              </div>
+                              <p className="text-xs text-slate-600 leading-relaxed">
+                                Burung Elang berada di puncak piramida makanan dengan sisa energi sebesar 10 kkal. Karena energinya sedikit, populasi elang di suatu hutan atau sabana selalu berjumlah lebih sedikit dibanding jumlah mangsanya.
+                              </p>
+                              <div className="bg-rose-50 rounded-xl p-2.5 text-[11px] text-rose-800 font-bold border border-rose-200">
+                                💡 Fakta Sains: Sebagai predator puncak, elang menjaga populasi ular, tikus, dan katak agar ekosistem tetap proporsional dan sehat.
+                              </div>
+                            </div>
+                          )}
+                          {selectedTrophicLevel === 4 && (
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">🍄</span>
+                                <h5 className="font-extrabold text-sm text-slate-900">
+                                  Tingkat Dekomposer: Pengurai (Jamur & Bakteri Tanah)
+                                </h5>
+                              </div>
+                              <p className="text-xs text-slate-600 leading-relaxed">
+                                Ketika makhluk hidup mati, jamur dan mikroba tanah menguraikan jasad organik menjadi zat hara mineral (nitrogen, fosfor, kalium). Zat ini kembali diserap oleh akar padi, menutup siklus materi secara sempurna!
+                              </p>
+                              <div className="bg-purple-50 rounded-xl p-2.5 text-[11px] text-purple-800 font-bold border border-purple-200">
+                                💡 Fakta Sains: Tanpa dekomposer, bumi akan terkubur bangkai dan tanah akan tandus tanpa nutrisi untuk tumbuhnya pepohonan baru!
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* ===========================================================
+                    3D. ISI WORKBENCH STASIUN 1: ANATOMI TUBUH & PANCA INDRA
+                =========================================================== */}
+                {selectedStation === 'human-anatomy' && (
+                  <div className="p-5 sm:p-6 space-y-5">
+                    {/* Sub-tab 4 Panca Indra: Mata, Telinga, Lidah, Kulit */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/90">
+                      <button
+                        type="button"
+                        onClick={() => setActiveSenseTab('eye')}
+                        className={`py-2 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                          activeSenseTab === 'eye'
+                            ? 'bg-white text-rose-700 shadow-xs border border-slate-200'
+                            : 'text-slate-600 hover:text-rose-700'
+                        }`}
+                      >
+                        <Icon icon="solar:eye-bold-duotone" className="text-base text-rose-500" />
+                        <span>Mata & Pupil 👁️</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveSenseTab('ear')}
+                        className={`py-2 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                          activeSenseTab === 'ear'
+                            ? 'bg-white text-indigo-700 shadow-xs border border-slate-200'
+                            : 'text-slate-600 hover:text-indigo-700'
+                        }`}
+                      >
+                        <Icon icon="solar:volume-loud-bold-duotone" className="text-base text-indigo-500" />
+                        <span>Telinga & Bunyi 👂</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveSenseTab('tongue')}
+                        className={`py-2 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                          activeSenseTab === 'tongue'
+                            ? 'bg-white text-amber-700 shadow-xs border border-slate-200'
+                            : 'text-slate-600 hover:text-amber-700'
+                        }`}
+                      >
+                        <Icon icon="solar:cup-bold-duotone" className="text-base text-amber-500" />
+                        <span>Lidah & 5 Rasa 👅</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveSenseTab('skin')}
+                        className={`py-2 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                          activeSenseTab === 'skin'
+                            ? 'bg-white text-sky-700 shadow-xs border border-slate-200'
+                            : 'text-slate-600 hover:text-sky-700'
+                        }`}
+                      >
+                        <Icon icon="solar:hand-shake-bold-duotone" className="text-base text-sky-500" />
+                        <span>Kulit & Saraf 🖐️</span>
+                      </button>
+                    </div>
+
+                    {/* SENSE 1: MATA & REFLEKS PUPIL TERHADAP CAHAYA */}
+                    {activeSenseTab === 'eye' && (
+                      <div className="space-y-4">
+                        <div className="rounded-2xl p-5 border border-slate-200 bg-gradient-to-b from-slate-900 via-slate-800 to-indigo-950 text-white flex flex-col items-center justify-center min-h-[260px] relative overflow-hidden shadow-inner">
+                          {/* Sinar Senter Visualizer */}
+                          {eyeLightLevel >= 50 && (
+                            <div
+                              className="absolute top-0 left-0 w-full h-full pointer-events-none transition-opacity duration-300"
+                              style={{
+                                background: `radial-gradient(circle at 50% 50%, rgba(254, 240, 138, ${
+                                  (eyeLightLevel / 100) * 0.45
+                                }) 0%, transparent 70%)`,
+                              }}
+                            />
+                          )}
+
+                          {/* SVG Anatomi Mata Manusia Interaktif */}
+                          <div className="relative z-10 flex flex-col items-center">
+                            <svg
+                              width="260"
+                              height="160"
+                              viewBox="0 0 260 160"
+                              className="drop-shadow-lg"
+                            >
+                              <defs>
+                                <radialGradient id="irisGrad" cx="50%" cy="50%" r="50%">
+                                  <stop offset="0%" stopColor="#38bdf8" />
+                                  <stop offset="65%" stopColor="#0284c7" />
+                                  <stop offset="100%" stopColor="#075985" />
+                                </radialGradient>
+                              </defs>
+                              {/* Sclera Putih Mata */}
+                              <ellipse
+                                cx="130"
+                                cy="80"
+                                rx="115"
+                                ry="62"
+                                fill="#f8fafc"
+                                stroke="#94a3b8"
+                                strokeWidth="3"
+                              />
+                              {/* Pembuluh Darah Halus di Sclera */}
+                              <path
+                                d="M 25,80 Q 55,75 75,78 M 235,80 Q 205,75 185,78 M 35,92 Q 60,86 80,90"
+                                stroke="#f87171"
+                                strokeWidth="1"
+                                fill="none"
+                                opacity="0.6"
+                              />
+                              {/* Iris Berwarna */}
+                              <circle
+                                cx="130"
+                                cy="80"
+                                r="48"
+                                fill="url(#irisGrad)"
+                                stroke="#0369a1"
+                                strokeWidth="2.5"
+                              />
+                              {/* Garis Radiasi Otot Iris */}
+                              {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map(
+                                (deg) => (
+                                  <line
+                                    key={deg}
+                                    x1={130 + Math.cos((deg * Math.PI) / 180) * 22}
+                                    y1={80 + Math.sin((deg * Math.PI) / 180) * 22}
+                                    x2={130 + Math.cos((deg * Math.PI) / 180) * 45}
+                                    y2={80 + Math.sin((deg * Math.PI) / 180) * 45}
+                                    stroke="#bae6fd"
+                                    strokeWidth="1.2"
+                                    opacity="0.7"
+                                  />
+                                )
+                              )}
+                              {/* Pupil Hitam yang Membesar/Mengecil Adaptif */}
+                              {(() => {
+                                const pupilRadius = Math.round(
+                                  38 - (eyeLightLevel / 100) * 24
+                                );
+                                return (
+                                  <>
+                                    <circle
+                                      cx="130"
+                                      cy="80"
+                                      r={pupilRadius}
+                                      fill="#09090b"
+                                      className="transition-all duration-300 ease-out"
+                                    />
+                                    {/* Pantulan Cahaya di Kornea */}
+                                    <circle
+                                      cx={130 - pupilRadius / 2.8}
+                                      cy={80 - pupilRadius / 2.8}
+                                      r={Math.max(3, pupilRadius / 3.2)}
+                                      fill="#ffffff"
+                                      opacity="0.85"
+                                    />
+                                  </>
+                                );
+                              })()}
+                            </svg>
+
+                            <div className="mt-3 text-center">
+                              <span className="text-xs font-extrabold uppercase tracking-wider text-rose-300">
+                                {eyeLightLevel >= 70
+                                  ? 'Pupil Mengecil (Miosis) · Melindungi Retina dari Silau 💡'
+                                  : eyeLightLevel <= 30
+                                  ? 'Pupil Melebar (Midriasis) · Menangkap Cahaya Redup 🌙'
+                                  : 'Respon Normal · Intensitas Sedang ⛅'}
+                              </span>
+                              <div className="text-[11px] text-slate-300 mt-0.5">
+                                Diameter Pupil Relatif: {(8.0 - (eyeLightLevel / 100) * 5.5).toFixed(1)} mm · Otot Sfingter Iris Aktif
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Slider & Kontrol Cahaya Mata */}
+                        <div className="rounded-2xl bg-slate-50/90 border border-slate-200/80 p-4 space-y-3">
+                          <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                            <span>🌙 Gelap (10%)</span>
+                            <span className="text-rose-600 font-extrabold">
+                              Intensitas Cahaya Senter: {eyeLightLevel}%
+                            </span>
+                            <span>💡 Sangat Silau (100%)</span>
+                          </div>
+                          <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            step="5"
+                            value={eyeLightLevel}
+                            onChange={(e) => setEyeLightLevel(parseInt(e.target.value, 10))}
+                            className="w-full accent-rose-600 cursor-pointer"
+                          />
+                          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setEyeLightLevel(15)}
+                                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-all cursor-pointer"
+                              >
+                                🌙 Ruang Redup (15%)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEyeLightLevel(50)}
+                                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 transition-all cursor-pointer"
+                              >
+                                ⛅ Cahaya Sedang (50%)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEyeLightLevel(90)}
+                                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition-all cursor-pointer"
+                              >
+                                💡 Senter Terang (90%)
+                              </button>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={handleResetExperiment}
+                              className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 transition-all cursor-pointer"
+                            >
+                              Reset
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SENSE 2: TELINGA, FREKUENSI & GETARAN GENDANG */}
+                    {activeSenseTab === 'ear' && (
+                      <div className="space-y-4">
+                        <div className="rounded-2xl p-5 border border-indigo-200 bg-gradient-to-br from-indigo-950 via-slate-900 to-violet-950 text-white min-h-[250px] flex flex-col items-center justify-between relative overflow-hidden shadow-inner">
+                          <div className="w-full flex items-center justify-between text-xs font-bold text-slate-300">
+                            <span>👂 Membran Timpani & Rumah Siput (Koklea)</span>
+                            <span className="text-amber-300 font-extrabold">
+                              Status: {isEarVibrating ? '⚡ Bergetar Aktif' : 'Tenang'}
+                            </span>
+                          </div>
+
+                          {/* Animasi Gelombang Suara & Saluran Telinga */}
+                          <div className="my-3 flex items-center justify-center gap-4 w-full max-w-md">
+                            <div className="text-3xl animate-bounce">
+                              {soundFrequency === 'low' ? '🔉' : soundFrequency === 'mid' ? '🔊' : '🔔'}
+                            </div>
+
+                            {/* SVG Gelombang Suara */}
+                            <svg width="180" height="60" viewBox="0 0 180 60" className="overflow-visible">
+                              <path
+                                d={
+                                  isEarVibrating
+                                    ? soundFrequency === 'high'
+                                      ? 'M 0,30 Q 15,10 30,30 T 60,30 T 90,30 T 120,30 T 150,30 T 180,30'
+                                      : soundFrequency === 'mid'
+                                      ? 'M 0,30 Q 25,12 50,30 T 100,30 T 150,30 T 180,30'
+                                      : 'M 0,30 Q 45,5 90,30 T 180,30'
+                                    : 'M 0,30 L 180,30'
+                                }
+                                fill="none"
+                                stroke={isEarVibrating ? '#38bdf8' : '#64748b'}
+                                strokeWidth="3"
+                                className={isEarVibrating ? 'animate-pulse' : ''}
+                              />
+                            </svg>
+
+                            <div className="flex flex-col items-center text-center">
+                              <div className={`text-4xl transition-transform ${isEarVibrating ? 'scale-115 rotate-3' : ''}`}>
+                                🐚
+                              </div>
+                              <span className="text-[10px] text-sky-300 mt-1 font-bold">Koklea (Siput)</span>
+                            </div>
+                          </div>
+
+                          <div className="w-full bg-white/10 rounded-xl px-4 py-2 text-center text-xs text-indigo-100 border border-white/15">
+                            {isEarVibrating
+                              ? `Gelombang frekuensi ${soundFrequency.toUpperCase()} menggetarkan gendang telinga, martil, landasan, sanggurdi, lalu diubah koklea jadi sinyal listrik ke otak!`
+                              : 'Klik tombol [Bunyikan Frekuensi] untuk mengirim gelombang suara ke saluran telinga.'}
+                          </div>
+                        </div>
+
+                        {/* Kontrol Frekuensi Bunyi */}
+                        <div className="rounded-2xl bg-slate-50/90 border border-slate-200/80 p-4 flex flex-wrap items-center justify-between gap-2.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSoundFrequency('low');
+                                setIsEarVibrating(true);
+                              }}
+                              className={`px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition-all cursor-pointer ${
+                                soundFrequency === 'low' && isEarVibrating
+                                  ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-indigo-50'
+                              }`}
+                            >
+                              🔉 100 Hz (Bass Rendah)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSoundFrequency('mid');
+                                setIsEarVibrating(true);
+                              }}
+                              className={`px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition-all cursor-pointer ${
+                                soundFrequency === 'mid' && isEarVibrating
+                                  ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-indigo-50'
+                              }`}
+                            >
+                              🔊 1.000 Hz (Vokal Manusia)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSoundFrequency('high');
+                                setIsEarVibrating(true);
+                              }}
+                              className={`px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition-all cursor-pointer ${
+                                soundFrequency === 'high' && isEarVibrating
+                                  ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-indigo-50'
+                              }`}
+                            >
+                              🔔 8.000 Hz (Cicitan Tinggi)
+                            </button>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setIsEarVibrating((v) => !v)}
+                            className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-all cursor-pointer"
+                          >
+                            <Icon icon={isEarVibrating ? 'solar:stop-bold-duotone' : 'solar:play-bold-duotone'} className="text-base" />
+                            <span>{isEarVibrating ? 'Hentikan Bunyi' : 'Bunyikan Garpu Tala'}</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SENSE 3: LIDAH & 5 ZONA RASA DASAR */}
+                    {activeSenseTab === 'tongue' && (
+                      <div className="space-y-4">
+                        <div className="rounded-2xl p-5 border border-amber-200 bg-gradient-to-br from-amber-50/80 via-white to-rose-50/60 min-h-[260px] flex flex-col items-center justify-between relative shadow-inner">
+                          <div className="w-full flex items-center justify-between text-xs font-bold text-slate-700">
+                            <span>👅 Peta Papila Sensorik Lidah</span>
+                            <span className="text-rose-600 font-extrabold uppercase">
+                              Rasa Terpilih: {selectedTaste.toUpperCase()}
+                            </span>
+                          </div>
+
+                          {/* SVG Skematis Lidah dengan Zona Rasa */}
+                          <div className="my-2 relative flex items-center justify-center">
+                            <svg width="220" height="150" viewBox="0 0 220 150">
+                              {/* Bentuk Dasar Lidah */}
+                              <path
+                                d="M 50,20 C 50,90 80,140 110,140 C 140,140 170,90 170,20 C 150,15 130,12 110,12 C 90,12 70,15 50,20 Z"
+                                fill="#fda4af"
+                                stroke="#f43f5e"
+                                strokeWidth="3"
+                              />
+                              {/* Garis Tengah Lidah */}
+                              <path d="M 110,25 L 110,115" stroke="#fb7185" strokeWidth="2" strokeDasharray="3,3" />
+
+                              {/* Zona Pahit (Pangkal Belakang) */}
+                              <path
+                                d="M 60,30 C 80,22 140,22 160,30 C 150,45 70,45 60,30 Z"
+                                fill={selectedTaste === 'bitter' ? '#854d0e' : '#fecdd3'}
+                                opacity={selectedTaste === 'bitter' ? '0.9' : '0.4'}
+                                className="transition-colors duration-300"
+                              />
+                              {/* Zona Asam (Samping Kiri & Kanan Belakang) */}
+                              <path
+                                d="M 55,42 C 68,48 70,75 58,85 C 52,70 52,55 55,42 Z"
+                                fill={selectedTaste === 'sour' ? '#eab308' : '#fecdd3'}
+                                opacity={selectedTaste === 'sour' ? '0.9' : '0.4'}
+                                className="transition-colors duration-300"
+                              />
+                              <path
+                                d="M 165,42 C 152,48 150,75 162,85 C 168,70 168,55 165,42 Z"
+                                fill={selectedTaste === 'sour' ? '#eab308' : '#fecdd3'}
+                                opacity={selectedTaste === 'sour' ? '0.9' : '0.4'}
+                                className="transition-colors duration-300"
+                              />
+
+                              {/* Zona Asin (Samping Kiri & Kanan Depan) */}
+                              <path
+                                d="M 62,88 C 75,95 80,115 72,122 C 63,110 60,100 62,88 Z"
+                                fill={selectedTaste === 'salty' ? '#0ea5e9' : '#fecdd3'}
+                                opacity={selectedTaste === 'salty' ? '0.9' : '0.4'}
+                                className="transition-colors duration-300"
+                              />
+                              <path
+                                d="M 158,88 C 145,95 140,115 148,122 C 157,110 160,100 158,88 Z"
+                                fill={selectedTaste === 'salty' ? '#0ea5e9' : '#fecdd3'}
+                                opacity={selectedTaste === 'salty' ? '0.9' : '0.4'}
+                                className="transition-colors duration-300"
+                              />
+
+                              {/* Zona Manis (Ujung Depan) */}
+                              <path
+                                d="M 80,122 C 95,138 125,138 140,122 C 125,115 95,115 80,122 Z"
+                                fill={selectedTaste === 'sweet' ? '#f43f5e' : '#fecdd3'}
+                                opacity={selectedTaste === 'sweet' ? '0.9' : '0.4'}
+                                className="transition-colors duration-300"
+                              />
+
+                              {/* Zona Umami (Pusat Lidah) */}
+                              <ellipse
+                                cx="110"
+                                cy="75"
+                                rx="22"
+                                ry="18"
+                                fill={selectedTaste === 'umami' ? '#a855f7' : '#fecdd3'}
+                                opacity={selectedTaste === 'umami' ? '0.9' : '0.4'}
+                                className="transition-colors duration-300"
+                              />
+                            </svg>
+                          </div>
+
+                          <div className="w-full bg-white/90 rounded-xl px-4 py-2 text-center text-xs font-semibold text-slate-700 border border-slate-200">
+                            {selectedTaste === 'sweet' && '🍯 Madu Manis direspons paling kuat di ujung lidah! Gula memberi energi instan.'}
+                            {selectedTaste === 'salty' && '🧂 Garam Asin direspons di tepi depan lidah, penting untuk keseimbangan elektrolit tubuh.'}
+                            {selectedTaste === 'sour' && '🍋 Lemon Asam direspons di tepi samping, memicu air liur untuk membantu mencerna makanan.'}
+                            {selectedTaste === 'bitter' && '☕ Kopi Pahit direspons di pangkal lidah sebagai alarm alami mendeteksi zat beracun.'}
+                            {selectedTaste === 'umami' && '🍄 Kuah Kaldu Gurih direspons di pusat lidah oleh asam amino glutamat pembentuk protein.'}
+                          </div>
+                        </div>
+
+                        {/* Tombol Pemilihan Rasa */}
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                          {[
+                            { id: 'sweet', label: '🍯 Madu (Manis)', color: 'hover:bg-rose-50 text-rose-700 border-rose-200' },
+                            { id: 'salty', label: '🧂 Garam (Asin)', color: 'hover:bg-sky-50 text-sky-700 border-sky-200' },
+                            { id: 'sour', label: '🍋 Lemon (Asam)', color: 'hover:bg-amber-50 text-amber-700 border-amber-200' },
+                            { id: 'bitter', label: '☕ Kopi (Pahit)', color: 'hover:bg-stone-50 text-stone-700 border-stone-200' },
+                            { id: 'umami', label: '🍄 Kaldu (Umami)', color: 'hover:bg-purple-50 text-purple-700 border-purple-200' },
+                          ].map((t) => (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => setSelectedTaste(t.id as any)}
+                              className={`p-2.5 rounded-xl text-xs font-extrabold border transition-all cursor-pointer text-center ${
+                                selectedTaste === t.id
+                                  ? 'bg-rose-500 text-white border-rose-600 shadow-xs'
+                                  : `bg-white ${t.color}`
+                              }`}
+                            >
+                              {t.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SENSE 4: KULIT, DERMIS & RESEPTOR SARAF */}
+                    {activeSenseTab === 'skin' && (
+                      <div className="space-y-4">
+                        <div className="rounded-2xl p-5 border border-sky-200 bg-gradient-to-br from-sky-950 via-slate-900 to-indigo-950 text-white min-h-[250px] flex flex-col items-center justify-between relative shadow-inner">
+                          <div className="w-full flex items-center justify-between text-xs font-bold text-slate-300">
+                            <span>🖐️ Penampang Lapisan Kulit: Epidermis ➔ Dermis ➔ Saraf</span>
+                            <span className="text-sky-300 font-extrabold uppercase">
+                              Stimulus: {selectedSkinStimulus}
+                            </span>
+                          </div>
+
+                          {/* Visual Lapisan Kulit & Reseptor */}
+                          <div className="w-full max-w-lg my-2 bg-white/10 rounded-2xl p-3 border border-white/15 space-y-2">
+                            <div className="h-4 rounded-lg bg-amber-400/80 text-[10px] font-extrabold text-slate-900 px-2 flex items-center justify-between">
+                              <span>Lapisan Epidermis (Pelindung Luar)</span>
+                              <span>Pori-pori Keringat</span>
+                            </div>
+
+                            <div className="h-16 rounded-xl bg-rose-500/20 border border-rose-400/30 p-2 flex items-center justify-around relative">
+                              <div
+                                className={`p-2 rounded-xl border text-center transition-all ${
+                                  selectedSkinStimulus === 'touch'
+                                    ? 'bg-sky-400 text-slate-950 ring-2 ring-white scale-105 font-extrabold'
+                                    : 'bg-white/15 text-white border-white/20'
+                                }`}
+                              >
+                                <span className="text-xs">🪶 Meissner</span>
+                                <div className="text-[9px] text-slate-300">Raba Halus</div>
+                              </div>
+
+                              <div
+                                className={`p-2 rounded-xl border text-center transition-all ${
+                                  selectedSkinStimulus === 'cold'
+                                    ? 'bg-sky-400 text-slate-950 ring-2 ring-white scale-105 font-extrabold'
+                                    : 'bg-white/15 text-white border-white/20'
+                                }`}
+                              >
+                                <span className="text-xs">❄️ Krause</span>
+                                <div className="text-[9px] text-slate-300">Sensor Dingin</div>
+                              </div>
+
+                              <div
+                                className={`p-2 rounded-xl border text-center transition-all ${
+                                  selectedSkinStimulus === 'heat'
+                                    ? 'bg-sky-400 text-slate-950 ring-2 ring-white scale-105 font-extrabold'
+                                    : 'bg-white/15 text-white border-white/20'
+                                }`}
+                              >
+                                <span className="text-xs">☀️ Ruffini</span>
+                                <div className="text-[9px] text-slate-300">Sensor Hangat</div>
+                              </div>
+
+                              <div
+                                className={`p-2 rounded-xl border text-center transition-all ${
+                                  selectedSkinStimulus === 'pressure'
+                                    ? 'bg-sky-400 text-slate-950 ring-2 ring-white scale-105 font-extrabold'
+                                    : 'bg-white/15 text-white border-white/20'
+                                }`}
+                              >
+                                <span className="text-xs">🔨 Pacini</span>
+                                <div className="text-[9px] text-slate-300">Tekanan Dalam</div>
+                              </div>
+                            </div>
+
+                            <div className="h-5 rounded-lg bg-amber-600/40 text-[10px] text-amber-200 px-2 flex items-center justify-between font-bold">
+                              <span>Lapisan Subkutan / Lemak Kulit</span>
+                              <span>⚡ Serabut Saraf ke Otak</span>
+                            </div>
+                          </div>
+
+                          <div className="w-full bg-white/10 rounded-xl px-4 py-2 text-center text-xs text-sky-100 border border-white/15">
+                            {selectedSkinStimulus === 'touch' && '🪶 Korpuskel Meissner mendeteksi sentuhan bulu halus, lalu mengirim sinyal secepat 70 m/s ke otak!'}
+                            {selectedSkinStimulus === 'cold' && '❄️ Korpuskel Krause mendeteksi suhu dingin es, merangsang pembuluh darah menyempit.'}
+                            {selectedSkinStimulus === 'heat' && '☀️ Korpuskel Ruffini mendeteksi suhu hangat dan merangsang kelenjar keringat mendinginkan tubuh.'}
+                            {selectedSkinStimulus === 'pressure' && '🔨 Korpuskel Pacini mendeteksi tekanan kuat atau getaran saat kamu menggenggam bola.'}
+                          </div>
+                        </div>
+
+                        {/* Tombol Stimulus Kulit */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {[
+                            { id: 'touch', label: '🪶 Sentuhan Bulu' },
+                            { id: 'cold', label: '❄️ Es Dingin' },
+                            { id: 'heat', label: '☀️ Suhu Hangat' },
+                            { id: 'pressure', label: '🔨 Tekanan Kuat' },
+                          ].map((stim) => (
+                            <button
+                              key={stim.id}
+                              type="button"
+                              onClick={() => setSelectedSkinStimulus(stim.id as any)}
+                              className={`p-3 rounded-xl text-xs font-extrabold border transition-all cursor-pointer text-center ${
+                                selectedSkinStimulus === stim.id
+                                  ? 'bg-sky-600 text-white border-sky-700 shadow-xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-sky-50'
+                              }`}
+                            >
+                              {stim.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </section>
 
               {/* =============================================================
-                  KATALOG STASIUN EKSPERIMEN GALAKSI (CARD GRID 3 KOLOM ELEGAN)
+                  KATALOG STASIUN EKSPERIMEN GALAKSI (CARD GRID 4 KOLOM ELEGAN)
                   Menggantikan tab browser kaku di atas dengan kartu katalog rapi
               ============================================================= */}
               <section aria-label="Katalog Stasiun Eksperimen Galaksi" className="space-y-3">
@@ -2373,11 +3385,11 @@ export const VirtualLabModule: React.FC<VirtualLabModuleProps> = ({
                     </p>
                   </div>
                   <span className="text-xs font-bold text-indigo-600">
-                    3 Stasiun Tersedia
+                    {STATION_CATALOG.length} Stasiun Tersedia
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {STATION_CATALOG.map((st) => {
                     const isSelected = selectedStation === st.id;
                     return (

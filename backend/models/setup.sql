@@ -104,11 +104,54 @@ INSERT INTO users (name, email, password_hash, role) VALUES
 INSERT INTO users (name, email, password_hash, role, learning_style) VALUES
 ('Ahmad Ilmuwan', 'ahmad@bintangedu.id', '$2b$10$DummyHashForTestingPurposesOnly', 'student', 'reading');
 
--- Insert sample modules
+-- Insert sample modules lengkap
 INSERT INTO science_modules (teacher_id, title, category, content_data) VALUES
-(1, 'Sistem Tata Surya', 'Astronomi', '{"description": "Pelajari planet-planet di tata surya kita", "difficulty": "easy"}'),
-(1, 'Siklus Air', 'Geografi', '{"description": "Bagaimana air beredar di bumi", "difficulty": "medium"}'),
-(1, 'Rantai Makanan', 'Biologi', '{"description": "Hubungan antar makhluk hidup", "difficulty": "easy"}');
+(1, 'Anatomi Tubuh & Panca Indra Manusia 👁️', 'Biologi Manusia', '{
+  "subtitle": "Mengenal Fungsi Mata, Telinga, Kulit, Lidah & Saraf Manusia",
+  "grade": "Kelas 4–5 SD",
+  "points": 100,
+  "xp": 60,
+  "mission_objective": "Pahami cara kerja pupil mata mengatur intensitas cahaya, resonansi gendang telinga, papila rasa lidah, dan serabut saraf perasa kulit.",
+  "lab_station_id": "human-anatomy",
+  "organs": [
+    {"name": "Mata (Penglihatan)", "function": "Menangkap berkas cahaya melalui kornea dan pupil, difokuskan lensa ke retina lalu dikirim ke otak via saraf optik."},
+    {"name": "Telinga (Pendengaran)", "function": "Menangkap getaran gelombang suara melalui gendang telinga dan koklea menuju saraf pendengaran."},
+    {"name": "Lidah (Pengecap)", "function": "Mendeteksi rasa manis, asam, asin, pahit, dan umami melalui ribuan papila perasa."},
+    {"name": "Kulit (Peraba)", "function": "Meraba tekstur, suhu panas-dingin, dan tekanan melalui reseptor saraf taktil."},
+    {"name": "Sistem Saraf", "function": "Mengalirkan impuls sinyal listrik dari panca indra ke otak dan memicu respons refleks."}
+  ]
+}'),
+(1, 'Dunia Tumbuhan & Ekosistem Hewan 🌿', 'Botani & Ekologi', '{
+  "subtitle": "Fotosintesis Klorofil Daun, Siklus Energi & Rantai Makanan",
+  "grade": "Kelas 4–6 SD",
+  "points": 100,
+  "xp": 70,
+  "mission_objective": "Buktikan peran klorofil dan sinar matahari dalam fotosintesis untuk memproduksi glukosa & O2, serta pelajari aliran energi trofik rantai makanan ekosistem.",
+  "lab_station_id": "photosynthesis",
+  "ecosystem": [
+    {"trophic": "Produsen (Tingkat 1)", "name": "Tumbuhan Hijau & Rumput 🌿", "energy": "1000 kkal", "role": "Fotosintesis menghasilkan glukosa & O₂"},
+    {"trophic": "Konsumen Primer (Tingkat 2)", "name": "Belalang & Kelinci 🦗🐇", "energy": "100 kkal", "role": "Herbivora pemakan produsen"},
+    {"trophic": "Konsumen Sekunder (Tingkat 3)", "name": "Katak & Ular 🐸🐍", "energy": "10 kkal", "role": "Karnivora memangsa herbivora"},
+    {"trophic": "Predator Puncak (Tingkat 4)", "name": "Burung Elang 🦅", "energy": "1 kkal", "role": "Karnivora puncak pengendali ekosistem"},
+    {"trophic": "Pengurai (Dekomposer)", "name": "Jamur & Bakteri 🍄", "energy": "Mineral tanah", "role": "Mengurai materi mati menjadi unsur hara"}
+  ]
+}'),
+(1, 'Siklus Air & Perubahan Wujud Benda 🌧️', 'Hidrologi Aktif', '{
+  "subtitle": "Evaporasi Air Laut, Kondensasi Awan & Presipitasi Hujan",
+  "grade": "Kelas 3–5 SD",
+  "points": 100,
+  "xp": 80,
+  "mission_objective": "Uji perubahan molekul air dari es padat (0°C), cair (50°C), hingga uap gas mendidih (100°C).",
+  "lab_station_id": "water-cycle"
+}'),
+(1, 'Sistem Tata Surya & Gravitasi Planet 🪐', 'Astronomi', '{
+  "subtitle": "Matahari, Orbit Planet & Tarikan Gravitasi Kosmik",
+  "grade": "Kelas 5–6 SD",
+  "points": 100,
+  "xp": 85,
+  "mission_objective": "Simulasi orbit dan gaya gravitasi planet Bumi, Mars, dan Jupiter mengitari Matahari.",
+  "lab_station_id": "solar-system"
+}');
 
 -- ============================================
 -- SELESAI

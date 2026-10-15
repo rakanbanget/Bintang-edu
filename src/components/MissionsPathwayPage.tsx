@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { AppSidebar } from './AppSidebar.tsx';
 import { AppViewRoute, UserSession } from '../types/navigation.ts';
+import { StationId } from './VirtualLabModule.tsx';
 
 interface MissionData {
   id: number;
@@ -16,13 +17,13 @@ interface MissionData {
   xp: number;
   status: 'completed' | 'active' | 'locked';
   progress: number;
-  actionLabStation?: 'water-cycle' | 'solar-system' | 'photosynthesis';
+  actionLabStation?: StationId;
 }
 
 interface MissionsPathwayPageProps {
   user: UserSession;
   onNavigate: (route: AppViewRoute) => void;
-  onOpenStation: (stationId: 'water-cycle' | 'solar-system' | 'photosynthesis') => void;
+  onOpenStation: (stationId: StationId) => void;
   onUpdateMissionStatus: (missionId: number, status: 'completed' | 'active') => void;
   hideSidebar?: boolean;
 }
@@ -47,11 +48,12 @@ export const MissionsPathwayPage: React.FC<MissionsPathwayPageProps> = ({
       zone: 'Zona Bumi & Biologi Manusia',
       tag: 'Biologi SD',
       icon: '👁️',
-      targetObjective: 'Pahami cara kerja pupil mata mengatur intensitas cahaya dan indra perasa lidah.',
+      targetObjective: 'Pahami cara kerja pupil mata mengatur intensitas cahaya, frekuensi telinga, dan indra perasa lidah.',
       stars: 30,
       xp: 60,
       status: 'completed',
       progress: 100,
+      actionLabStation: 'human-anatomy',
     },
     {
       id: 2,
@@ -61,7 +63,7 @@ export const MissionsPathwayPage: React.FC<MissionsPathwayPageProps> = ({
       zone: 'Zona Ekosistem Darat & Flora',
       tag: 'Botani & Ekologi',
       icon: '🌿',
-      targetObjective: 'Buktikan peran sinar matahari dan klorofil dalam menghasilkan glukosa dan oksigen O2.',
+      targetObjective: 'Buktikan peran sinar matahari dan klorofil dalam menghasilkan glukosa dan oksigen O2 serta rantai makanan.',
       stars: 35,
       xp: 70,
       status: 'completed',
