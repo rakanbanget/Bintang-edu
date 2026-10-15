@@ -6,7 +6,10 @@ interface RegisterPageProps {
   onBackToHome?: () => void;
   onGoToLogin?: () => void;
   onNotify?: (msg: string) => void;
+<<<<<<< HEAD
   onRegisterSuccess?: (userData?: any) => void;
+=======
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
 }
 
 const GRADE_OPTIONS = [
@@ -22,12 +25,16 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
   onBackToHome,
   onGoToLogin,
   onNotify,
+<<<<<<< HEAD
   onRegisterSuccess,
+=======
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
 }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+<<<<<<< HEAD
   const [role, setRole] = useState<'student' | 'teacher' | 'parent'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -71,17 +78,34 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
       const msg = '⚠️ Isi semua data formulir terlebih dahulu!';
       setErrorMessage(msg);
       onNotify?.(msg);
+=======
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [selectedGrade, setSelectedGrade] = useState('');
+  const [agreeTerms, setAgreeTerms] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!fullName.trim() || !email.trim() || !password.trim() || !selectedGrade) {
+      onNotify?.('⚠️ Isi semua data yang diperlukan ya!');
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
       return;
     }
 
     if (password !== confirmPassword) {
+<<<<<<< HEAD
       const msg = '⚠️ Konfirmasi password tidak cocok!';
       setErrorMessage(msg);
       onNotify?.(msg);
+=======
+      onNotify?.('⚠️ Kata sandi dan konfirmasi tidak cocok!');
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
       return;
     }
 
     if (!agreeTerms) {
+<<<<<<< HEAD
       const msg = '⚠️ Centang persetujuan syarat & ketentuan untuk melanjutkan!';
       setErrorMessage(msg);
       onNotify?.(msg);
@@ -161,6 +185,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     } finally {
       setLoading(false);
     }
+=======
+      onNotify?.('⚠️ Centang persetujuan untuk melanjutkan!');
+      return;
+    }
+
+    onNotify?.('🎉 Selamat! Akun Petualangmu berhasil dibuat! Siap menjelajah galaksi sains!');
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
   };
 
   return (
@@ -294,6 +325,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
               Daftar gratis dan mulai jelajahi galaksi sains!
             </p>
 
+<<<<<<< HEAD
             {/* Galaxy Alert Banner */}
             {errorMessage && (
               <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-red-200 bg-red-50 p-3.5 text-red-700 shadow-sm animate-pulse">
@@ -355,6 +387,10 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 </div>
               </div>
 
+=======
+            {/* Form register */}
+            <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
               {/* Input Nama Lengkap */}
               <div>
                 <label
@@ -433,6 +469,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                     <Icon icon={showPassword ? 'lucide:eye-off' : 'lucide:eye'} className="h-4 w-4" />
                   </button>
                 </div>
+<<<<<<< HEAD
                 {/* Password Strength Indicator */}
                 {password && (
                   <div className={`mt-2 flex items-center gap-2 text-xs font-bold ${passwordStrength.color}`}>
@@ -440,6 +477,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                     <span>{passwordStrength.label}</span>
                   </div>
                 )}
+=======
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
               </div>
 
               {/* Input Konfirmasi Kata Sandi */}
@@ -472,6 +511,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                     <Icon icon={showConfirmPassword ? 'lucide:eye-off' : 'lucide:eye'} className="h-4 w-4" />
                   </button>
                 </div>
+<<<<<<< HEAD
                 {/* Confirm Password Mismatch Indicator */}
                 {confirmPassword && password !== confirmPassword && (
                   <div className="mt-2 flex items-center gap-2 text-xs font-bold text-red-400">
@@ -485,6 +525,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                     <span>Password cocok!</span>
                   </div>
                 )}
+=======
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
               </div>
 
               {/* Pilihan Jenjang Kelas */}
@@ -550,6 +592,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
               {/* Tombol aksi utama */}
               <button
                 type="submit"
+<<<<<<< HEAD
                 disabled={loading}
                 className="w-full rounded-xl bg-gradient-to-r from-yellow-400 to-orange-400 py-3 font-heading text-sm font-bold tracking-wide text-indigo-950 shadow-lg shadow-orange-300/40 transition-all hover:from-yellow-300 hover:to-orange-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -564,6 +607,12 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                     <Icon icon="lucide:rocket" className="h-4 w-4" />
                   </>
                 )}
+=======
+                className="w-full rounded-xl bg-gradient-to-r from-yellow-400 to-orange-400 py-3 font-heading text-sm font-bold tracking-wide text-indigo-950 shadow-lg shadow-orange-300/40 transition-all hover:from-yellow-300 hover:to-orange-300 hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2 mt-6"
+              >
+                <span>Buat Akun Petualang</span>
+                <Icon icon="lucide:rocket" className="h-4 w-4" />
+>>>>>>> f3aebd2586ba85aef31e016c75ed5d168fbf403c
               </button>
             </form>
 

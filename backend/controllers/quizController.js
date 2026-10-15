@@ -165,15 +165,13 @@ const generateQuiz = async (req, res) => {
       'gemini-2.5-flash',
     ];
 
-    // Prompt Gemini persis sesuai spesifikasi instruksi
-    const prompt = `
-Buatkan 3-5 soal kuis pilihan ganda sains dari materi berikut. Output WAJIB dalam format JSON Array murni tanpa markdown: [{"question": "...", "options": ["A","B","C","D"], "answer": "Jawaban Benar"}]
+    // Gemini Prompt sesuai spesifikasi
+    const prompt = `Generate 3-5 multiple-choice science questions for elementary students based on this text. Return STRICT JSON Array ONLY: [{"question": "...", "options": ["A","B","C","D"], "answer": "Correct Answer"}]. Gunakan Bahasa Indonesia yang ramah anak SD.
 
-Ekstrak teks materi:
+Materi / Teks Sumber:
 """
 ${TEKS_MATERI}
-"""
-`;
+"""`;
 
     let responseText = '';
     let lastError = null;
