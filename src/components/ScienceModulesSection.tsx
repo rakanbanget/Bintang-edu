@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
+import { useNavigate } from 'react-router-dom';
 import { BintangEduMascot } from './BintangEduLogo.tsx';
 import {
   IconPopulerSains3D,
@@ -104,6 +105,7 @@ interface ScienceModulesSectionProps {
   onSelectQuizIndex: (idx: number) => void;
   onAddStars: (stars: number, reason: string) => void;
   onNotify: (msg: string) => void;
+  onNavigate?: (route: any) => void;
 }
 
 export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
@@ -113,7 +115,9 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
   onSelectQuizIndex,
   onAddStars,
   onNotify,
+  onNavigate,
 }) => {
+  const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [completedQuizIds, setCompletedQuizIds] = useState<number[]>([]);
 
@@ -130,6 +134,34 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
     INTERACTIVE_QUIZZES[activeQuizIndex] || INTERACTIVE_QUIZZES[0];
   const isAnswered = selectedOption !== null;
   const isCorrect = selectedOption === currentQuiz.correctIndex;
+
+  const handleCardQuizClick = async (quizId: number, topic: string) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    const isLoggedIn = Boolean(token || user);
+
+    if (!isLoggedIn) {
+      onNotify('🔐 Masuk atau daftar terlebih dahulu untuk mengakses modul eksperimen sains!');
+      navigate('/login');
+      return;
+    }
+
+    // Jika SUDAH Login: Panggil API GET /api/quiz/:id dari backend Express.js (Port 5001)
+    try {
+      const res = await fetch(`http://localhost:5001/api/quiz/${quizId}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log('Quiz data from Express (Port 5001):', data);
+      }
+    } catch (err) {
+      console.warn('Catatan koneksi API Express.js Port 5001:', err);
+    }
+
+    onNotify(`🚀 Menyiapkan modul simulator sains: ${topic}!`);
+    navigate('/virtual-lab');
+  };
 
   const handleAnswerQuiz = (optIndex: number) => {
     if (isAnswered) return;
@@ -213,25 +245,26 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
 
   return (
     <section
-      id="modul-sains"
+      id="ruang-eksplorasi"
       className="relative z-20 py-4 px-4 sm:px-8 lg:px-12"
     >
+      <div id="modul-sains" />
       <div className="mx-auto max-w-6xl">
         {/* ================================================================
             CONTAINER KACA GALAKSI 3D (Selaras dengan Tema Ruang Angkasa)
            ================================================================ */}
-        <div className="rounded-[36px] border border-white/15 bg-indigo-950/65 p-6 sm:p-10 lg:p-12 text-white shadow-2xl backdrop-blur-xl">
+        <div className="rounded-[36px] border border-purple-500/30 bg-gradient-to-br from-[#1c0f45] via-[#13092d] to-[#0d0521] p-6 sm:p-10 lg:p-12 text-white shadow-[0_22px_48px_rgba(2,6,23,0.38),0_0_28px_rgba(139,92,246,0.24)] backdrop-blur-xl">
           {/* Header Bagian Eksplorasi Mimpi & Sains */}
-          <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/15 pb-6">
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-purple-500/20 pb-6">
             <div>
-              <span className="font-heading text-xs font-bold uppercase tracking-wider text-yellow-300">
+              <span className="font-heading text-xs font-bold uppercase tracking-wider text-amber-300">
                 ✨ Bintang Edu • Childhood Dream Lab
               </span>
               <h2 className="mt-1 font-heading text-2xl sm:text-3xl font-bold text-white">
                 Jelajahi Wahana Sains & Wujudkan Mimpimu!
               </h2>
             </div>
-            <p className="max-w-md font-body text-xs sm:text-sm font-semibold text-blue-200/85">
+            <p className="max-w-md font-body text-xs sm:text-sm font-semibold text-purple-200/85">
               Pilih misi interaktif di bawah ini untuk memulai simulasi
               eksperimen, bermain kuis antariksa, dan mengumpulkan Bintang
               Prestasi.
@@ -247,8 +280,8 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
               onClick={() => handleCardAction('populer-sains')}
               className={`group flex flex-col sm:flex-row items-center sm:items-start gap-6 rounded-3xl border p-6 sm:p-7 transition-all duration-200 cursor-pointer ${
                 activeFeature === 'populer-sains'
-                  ? 'border-yellow-300 bg-gradient-to-br from-indigo-900/90 to-blue-900/80 shadow-[0_0_30px_rgba(250,204,21,0.2)]'
-                  : 'border-white/15 bg-white/5 hover:border-yellow-300/60 hover:bg-white/10'
+                  ? 'border-amber-400 bg-gradient-to-br from-[#1c0f45] to-[#13092d] shadow-[0_0_30px_rgba(250,204,21,0.2)]'
+                  : 'border-purple-500/20 bg-[#120a2a]/60 hover:border-amber-400/60 hover:bg-[#1a0e40]/70'
               }`}
             >
               <div
@@ -258,13 +291,13 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                 <IconPopulerSains3D />
               </div>
               <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                <span className="font-heading text-[11px] font-bold uppercase tracking-wider text-yellow-300">
+                <span className="font-heading text-[11px] font-bold uppercase tracking-wider text-amber-300">
                   MODUL & VIDEO IPA
                 </span>
                 <h3 className="mt-1 font-heading text-xl sm:text-2xl font-bold text-white">
                   Populer Sains
                 </h3>
-                <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-blue-100/85">
+                <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-purple-100/85">
                   Jelajahi topik sains paling disukai anak SD: rahasia cincin
                   Saturnus, dapur fotosintesis tumbuhan, hingga siklus pelangi.
                 </p>
@@ -274,7 +307,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                     e.stopPropagation();
                     handleCardAction('populer-sains');
                   }}
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-yellow-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-950 shadow-md transition-all hover:bg-yellow-300 hover:scale-105 active:scale-95 cursor-pointer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-amber-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-950 shadow-md transition-all hover:bg-amber-300 hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   <span>LIHAT POPULER</span>
                 </button>
@@ -283,12 +316,12 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
 
             {/* KARTU 2: TANTANGAN KUIS GAMIFIKASI */}
             <div
-              id="kuis-interaktif"
+              id="kuis-section"
               onClick={() => handleCardAction('kuis-gamifikasi')}
               className={`group flex flex-col sm:flex-row items-center sm:items-start gap-6 rounded-3xl border p-6 sm:p-7 transition-all duration-200 cursor-pointer ${
                 activeFeature === 'kuis-gamifikasi'
-                  ? 'border-cyan-300 bg-gradient-to-br from-blue-900/90 to-indigo-900/80 shadow-[0_0_30px_rgba(56,189,248,0.25)]'
-                  : 'border-white/15 bg-white/5 hover:border-cyan-300/60 hover:bg-white/10'
+                  ? 'border-cyan-300 bg-gradient-to-br from-[#1c0f45] to-[#13092d] shadow-[0_0_30px_rgba(56,189,248,0.25)]'
+                  : 'border-purple-500/20 bg-[#120a2a]/60 hover:border-cyan-300/60 hover:bg-[#1a0e40]/70'
               }`}
             >
               <div
@@ -304,7 +337,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                 <h3 className="mt-1 font-heading text-xl sm:text-2xl font-bold text-white">
                   Tantangan Kuis Gamifikasi
                 </h3>
-                <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-blue-100/85">
+                <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-purple-100/85">
                   Uji pemahaman sains lewat kuis interaktif seru! Jawab soal
                   dengan tepat dan kumpulkan Bintang Prestasi setiap hari.
                 </p>
@@ -314,7 +347,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                     e.stopPropagation();
                     handleCardAction('kuis-gamifikasi');
                   }}
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-cyan-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-950 shadow-md transition-all hover:bg-cyan-300 hover:scale-105 active:scale-95 cursor-pointer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-cyan-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-950 shadow-md transition-all hover:bg-cyan-300 hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   <span>MAINKAN KUIS</span>
                 </button>
@@ -326,8 +359,8 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
               onClick={() => handleCardAction('ai-generator')}
               className={`group flex flex-col sm:flex-row items-center sm:items-start gap-6 rounded-3xl border p-6 sm:p-7 transition-all duration-200 cursor-pointer ${
                 activeFeature === 'ai-generator'
-                  ? 'border-emerald-300 bg-gradient-to-br from-indigo-900/90 to-purple-900/80 shadow-[0_0_30px_rgba(52,211,153,0.22)]'
-                  : 'border-white/15 bg-white/5 hover:border-emerald-300/60 hover:bg-white/10'
+                  ? 'border-emerald-400 bg-gradient-to-br from-[#1c0f45] to-[#13092d] shadow-[0_0_30px_rgba(52,211,153,0.22)]'
+                  : 'border-purple-500/20 bg-[#120a2a]/60 hover:border-emerald-400/60 hover:bg-[#1a0e40]/70'
               }`}
             >
               <div
@@ -343,7 +376,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                 <h3 className="mt-1 font-heading text-xl sm:text-2xl font-bold text-white">
                   AI Generator untuk Guru/Ortu
                 </h3>
-                <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-blue-100/85">
+                <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-purple-100/85">
                   Susun lembar kerja eksperimen IPA di rumah, rangkuman materi
                   kurikulum SD, dan ide praktik sains instan berbasis AI.
                 </p>
@@ -353,7 +386,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                     e.stopPropagation();
                     handleCardAction('ai-generator');
                   }}
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-950 shadow-md transition-all hover:bg-emerald-300 hover:scale-105 active:scale-95 cursor-pointer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-950 shadow-md transition-all hover:bg-emerald-300 hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   <span>BUAT MODUL AI</span>
                 </button>
@@ -365,8 +398,8 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
               onClick={() => handleCardAction('multi-sensori')}
               className={`group flex flex-col sm:flex-row items-center sm:items-start gap-6 rounded-3xl border p-6 sm:p-7 transition-all duration-200 cursor-pointer ${
                 activeFeature === 'multi-sensori'
-                  ? 'border-purple-300 bg-gradient-to-br from-purple-900/90 to-indigo-900/80 shadow-[0_0_30px_rgba(192,132,252,0.25)]'
-                  : 'border-white/15 bg-white/5 hover:border-purple-300/60 hover:bg-white/10'
+                  ? 'border-purple-400 bg-gradient-to-br from-[#1c0f45] to-[#13092d] shadow-[0_0_30px_rgba(192,132,252,0.25)]'
+                  : 'border-purple-500/20 bg-[#120a2a]/60 hover:border-purple-400/60 hover:bg-[#1a0e40]/70'
               }`}
             >
               <div
@@ -382,7 +415,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                 <h3 className="mt-1 font-heading text-xl sm:text-2xl font-bold text-white">
                   Panduan Multi-Sensori
                 </h3>
-                <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-blue-100/85">
+                <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-purple-100/85">
                   Belajar konsep abstrak IPA jauh lebih mudah lewat kombinasi
                   ilustrasi visual 3D, narasi cerita suara, dan aktivitas
                   praktik.
@@ -393,7 +426,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                     e.stopPropagation();
                     handleCardAction('multi-sensori');
                   }}
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-purple-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-950 shadow-md transition-all hover:bg-purple-300 hover:scale-105 active:scale-95 cursor-pointer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-purple-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-950 shadow-md transition-all hover:bg-purple-300 hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   <span>BUKA PANDUAN</span>
                 </button>
@@ -406,14 +439,14 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
              ============================================================== */}
           <div
             id="interactive-feature-panel"
-            className="mt-8 rounded-3xl border border-white/15 bg-indigo-900/50 p-6 sm:p-8 backdrop-blur-md"
+            className="mt-8 rounded-3xl border border-purple-500/25 bg-[#120a2a]/80 p-6 sm:p-8 backdrop-blur-md"
           >
             {/* Tab Switcher Cepat */}
-            <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-white/15">
+            <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-purple-500/20">
               <div className="flex items-center gap-2">
                 <Icon
                   icon="lucide:sparkles"
-                  className="h-5 w-5 text-yellow-300 animate-pulse"
+                  className="h-5 w-5 text-amber-300 animate-pulse"
                 />
                 <span className="font-heading text-sm sm:text-base font-bold text-white">
                   Ruang Eksplorasi & Simulasi Bintang Edu
@@ -445,8 +478,8 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                     onClick={() => onSelectFeature(tab.key as ActiveFeatureKey)}
                     className={`rounded-full px-4 py-1.5 font-heading text-xs font-bold transition-all cursor-pointer ${
                       activeFeature === tab.key
-                        ? 'bg-yellow-400 text-indigo-950 shadow-md'
-                        : 'bg-white/10 text-blue-100 border border-white/15 hover:border-yellow-300/60'
+                        ? 'bg-amber-400 text-slate-950 font-black shadow-md'
+                        : 'bg-purple-950/40 text-purple-200 border border-purple-500/20 hover:border-amber-400/60 hover:text-white'
                     }`}
                   >
                     {tab.label}
@@ -461,7 +494,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                 {INTERACTIVE_QUIZZES.map((item, idx) => (
                   <div
                     key={item.id}
-                    className="flex flex-col justify-between rounded-2xl border border-white/15 bg-indigo-950/75 p-5 shadow-md transition-all hover:border-yellow-300"
+                    className="flex flex-col justify-between rounded-2xl border border-purple-500/20 bg-[#120a2a]/75 p-5 shadow-md transition-all hover:border-yellow-300"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2">
@@ -479,17 +512,29 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                         {item.explanation}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleSwitchQuiz(idx);
-                        onSelectFeature('kuis-gamifikasi');
-                      }}
-                      className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-full bg-yellow-400 px-4 py-2 font-heading text-xs font-bold text-indigo-950 hover:bg-yellow-300 cursor-pointer"
-                    >
-                      <span>Mainkan Kuis</span>
-                      <Icon icon="lucide:chevron-right" className="h-3.5 w-3.5" />
-                    </button>
+                    <div className="mt-4 flex flex-col gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleSwitchQuiz(idx);
+                          onSelectFeature('kuis-gamifikasi');
+                          const el = document.getElementById('interactive-feature-panel');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-full bg-white/10 border border-white/20 py-2 font-heading text-xs font-bold text-white hover:bg-white/20 transition-colors cursor-pointer"
+                      >
+                        <span>Mainkan Kuis</span>
+                        <Icon icon="lucide:chevron-right" className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleCardQuizClick(item.id, item.topic)}
+                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-full bg-amber-400 py-2 font-heading text-xs font-bold text-slate-950 hover:bg-amber-300 shadow-md transition-all hover:scale-102 active:scale-98 cursor-pointer"
+                      >
+                        <span>Mulai Eksperimen</span>
+                        <Icon icon="lucide:rocket" className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -513,7 +558,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                         className={`w-full flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition-all cursor-pointer ${
                           isCurrent
                             ? 'border-yellow-300 bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md'
-                            : 'border-white/15 bg-indigo-950/60 text-blue-100 hover:border-yellow-300/50'
+                            : 'border-purple-500/20 bg-[#120a2a]/60 text-blue-100 hover:border-yellow-300/50'
                         }`}
                       >
                         <div>
@@ -527,9 +572,9 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                         <span
                           className={`rounded-full px-2.5 py-1 font-heading text-xs font-bold ${
                             isDone
-                              ? 'bg-emerald-400 text-indigo-950'
+                              ? 'bg-emerald-400 text-slate-950'
                               : isCurrent
-                              ? 'bg-yellow-400 text-indigo-950'
+                              ? 'bg-amber-400 text-slate-950'
                               : 'bg-white/10 text-blue-100'
                           }`}
                         >
@@ -540,8 +585,8 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                   })}
                 </div>
 
-                <div className="lg:col-span-8 rounded-2xl border border-white/15 bg-indigo-950/80 p-6 sm:p-7 shadow-lg">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-4">
+                <div className="lg:col-span-8 rounded-2xl border border-purple-500/20 bg-[#120a2a]/80 p-6 sm:p-7 shadow-lg">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-purple-500/20 pb-4">
                     <div>
                       <span className="font-heading text-xs font-bold uppercase tracking-wider text-cyan-300">
                         {currentQuiz.topic} • {currentQuiz.grade}
@@ -550,7 +595,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                         {currentQuiz.question}
                       </h4>
                     </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-yellow-400 px-3.5 py-1 font-heading text-xs font-bold text-indigo-950">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3.5 py-1 font-heading text-xs font-bold text-slate-950">
                       <Icon icon="lucide:award" className="h-4 w-4" />
                       Hadiah +{currentQuiz.stars} Bintang
                     </span>
@@ -562,7 +607,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                       const isRight = idx === currentQuiz.correctIndex;
 
                       let btnStyle =
-                        'border-white/15 bg-white/5 text-white hover:border-yellow-300 hover:bg-white/10';
+                        'border-purple-500/20 bg-white/5 text-white hover:border-yellow-300 hover:bg-white/10';
                       if (isAnswered) {
                         if (isRight) {
                           btnStyle =
@@ -588,10 +633,10 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                             <span
                               className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg font-heading text-xs font-bold ${
                                 isAnswered && isRight
-                                  ? 'bg-emerald-400 text-indigo-950'
+                                  ? 'bg-emerald-400 text-slate-950'
                                   : isSelected
-                                  ? 'bg-amber-400 text-indigo-950'
-                                  : 'bg-yellow-400 text-indigo-950'
+                                  ? 'bg-amber-400 text-slate-950'
+                                  : 'bg-amber-400 text-slate-950'
                               }`}
                             >
                               {opt.code}
@@ -629,14 +674,24 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                           {currentQuiz.explanation}
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedOption(null)}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-yellow-400 px-4 py-2 font-heading text-xs font-bold text-indigo-950 hover:bg-yellow-300 cursor-pointer"
-                      >
-                        <Icon icon="lucide:rotate-ccw" className="h-3.5 w-3.5" />
-                        <span>Coba Lagi</span>
-                      </button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedOption(null)}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/20 px-3.5 py-2 font-heading text-xs font-bold text-white hover:bg-white/20 cursor-pointer"
+                        >
+                          <Icon icon="lucide:rotate-ccw" className="h-3.5 w-3.5" />
+                          <span>Coba Lagi</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleCardQuizClick(currentQuiz.id, currentQuiz.topic)}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-4 py-2 font-heading text-xs font-bold text-slate-950 hover:bg-amber-300 shadow-md cursor-pointer whitespace-nowrap"
+                        >
+                          <Icon icon="lucide:flask-conical" className="h-3.5 w-3.5" />
+                          <span>Praktik di Lab</span>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -648,7 +703,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
               <div className="mt-6 grid gap-6 lg:grid-cols-12 items-start">
                 <form
                   onSubmit={handleGenerateAISheet}
-                  className="lg:col-span-5 rounded-2xl border border-white/15 bg-indigo-950/80 p-6 shadow-md space-y-4"
+                  className="lg:col-span-5 rounded-2xl border border-purple-500/20 bg-[#120a2a]/80 p-6 shadow-md space-y-4"
                 >
                   <div className="flex items-center gap-2">
                     <Icon
@@ -696,13 +751,13 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
 
                   <button
                     type="submit"
-                    className="w-full rounded-full bg-yellow-400 py-3 font-heading text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-950 shadow-md hover:bg-yellow-300 cursor-pointer"
+                    className="w-full rounded-full bg-amber-400 py-3 font-heading text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-950 shadow-md hover:bg-amber-300 cursor-pointer"
                   >
                     ✨ SUSUN PANDUAN EKSPERIMEN AI
                   </button>
                 </form>
 
-                <div className="lg:col-span-7 rounded-2xl border border-white/15 bg-indigo-950/80 p-6 shadow-md">
+                <div className="lg:col-span-7 rounded-2xl border border-purple-500/20 bg-[#120a2a]/80 p-6 shadow-md">
                   {generatedSheet ? (
                     <div className="space-y-3">
                       <span className="inline-block rounded-full bg-emerald-400/20 border border-emerald-400/40 px-3 py-1 font-heading text-xs font-bold text-emerald-300">
@@ -726,7 +781,7 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                             key={i}
                             className="flex items-start gap-2.5 rounded-xl bg-white/5 border border-white/10 p-3 font-body text-xs sm:text-sm font-semibold text-white"
                           >
-                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-yellow-400 font-heading text-xs font-bold text-indigo-950">
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400 font-heading text-xs font-bold text-slate-950">
                               {i + 1}
                             </span>
                             <span>{step}</span>
@@ -738,6 +793,25 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                           🌟 Fakta Sains Seru:{' '}
                         </strong>
                         {generatedSheet.funFact}
+                      </div>
+
+                      <div className="pt-2 flex flex-wrap items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => navigate('/dashboard')}
+                          className="inline-flex items-center gap-2 rounded-full bg-emerald-400 hover:bg-emerald-300 px-5 py-2 font-heading text-xs font-bold text-slate-950 shadow-md cursor-pointer transition-all hover:scale-105 active:scale-95"
+                        >
+                          <Icon icon="lucide:layout-dashboard" className="h-4 w-4" />
+                          <span>Buka Lembar di Dashboard Guru/Ortu</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => navigate('/virtual-lab')}
+                          className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 px-5 py-2 font-heading text-xs font-bold text-white cursor-pointer transition-all"
+                        >
+                          <Icon icon="lucide:test-tube" className="h-4 w-4 text-cyan-300" />
+                          <span>Uji Coba di Lab Virtual</span>
+                        </button>
                       </div>
                     </div>
                   ) : (
@@ -762,44 +836,64 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
 
             {/* KONTEN 4: PANDUAN MULTI-SENSORI */}
             {activeFeature === 'multi-sensori' && (
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-white/15 bg-indigo-950/80 p-5 shadow-md">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-400 text-indigo-950">
-                    <Icon icon="lucide:eye" className="h-5 w-5" />
+              <div className="mt-6 space-y-6">
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-purple-500/20 bg-[#120a2a]/80 p-5 shadow-md">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400 text-slate-950">
+                      <Icon icon="lucide:eye" className="h-5 w-5" />
+                    </div>
+                    <h4 className="mt-3 font-heading text-base font-bold text-white">
+                      1. Sensori Visual 3D
+                    </h4>
+                    <p className="mt-1.5 font-body text-xs sm:text-sm font-semibold leading-relaxed text-blue-100/85">
+                      Ilustrasi galaksi 3D yang bergerak hidup membantu anak
+                      membayangkan konsep ruang angkasa dengan mudah.
+                    </p>
                   </div>
-                  <h4 className="mt-3 font-heading text-base font-bold text-white">
-                    1. Sensori Visual 3D
-                  </h4>
-                  <p className="mt-1.5 font-body text-xs sm:text-sm font-semibold leading-relaxed text-blue-100/85">
-                    Ilustrasi galaksi 3D yang bergerak hidup membantu anak
-                    membayangkan konsep ruang angkasa dengan mudah.
-                  </p>
+
+                  <div className="rounded-2xl border border-purple-500/20 bg-[#120a2a]/80 p-5 shadow-md">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400 text-slate-950">
+                      <Icon icon="lucide:volume-2" className="h-5 w-5" />
+                    </div>
+                    <h4 className="mt-3 font-heading text-base font-bold text-white">
+                      2. Sensori Audio Bercerita
+                    </h4>
+                    <p className="mt-1.5 font-body text-xs sm:text-sm font-semibold leading-relaxed text-blue-100/85">
+                      Setiap topik dilengkapi dongeng sains interaktif dari Si
+                      Bintang Pintar sehingga anak tidak cepat bosan membaca teks.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-purple-500/20 bg-[#120a2a]/80 p-5 shadow-md">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-400 text-slate-950">
+                      <Icon icon="lucide:hand" className="h-5 w-5" />
+                    </div>
+                    <h4 className="mt-3 font-heading text-base font-bold text-white">
+                      3. Praktik Kinestetik
+                    </h4>
+                    <p className="mt-1.5 font-body text-xs sm:text-sm font-semibold leading-relaxed text-blue-100/85">
+                      Anak diajak menyentuh, memilih simulasi eksperimen, dan
+                      mempraktikkan percobaan sains sederhana yang aman di rumah.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="rounded-2xl border border-white/15 bg-indigo-950/80 p-5 shadow-md">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400 text-indigo-950">
-                    <Icon icon="lucide:volume-2" className="h-5 w-5" />
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-purple-400/30 bg-purple-950/60 p-4 sm:p-5">
+                  <div className="flex items-center gap-3">
+                    <Icon icon="lucide:sparkles" className="h-6 w-6 text-yellow-300 shrink-0" />
+                    <div>
+                      <h5 className="font-heading text-sm font-bold text-white">Eksplorasi Metode Adaptif di Simulator Lab Virtual</h5>
+                      <p className="font-body text-xs text-blue-200">Uji langsung simulasi molekul air, gravitasi tata surya, dan fotosintesis 60 FPS.</p>
+                    </div>
                   </div>
-                  <h4 className="mt-3 font-heading text-base font-bold text-white">
-                    2. Sensori Audio Bercerita
-                  </h4>
-                  <p className="mt-1.5 font-body text-xs sm:text-sm font-semibold leading-relaxed text-blue-100/85">
-                    Setiap topik dilengkapi dongeng sains interaktif dari Si
-                    Bintang Pintar sehingga anak tidak cepat bosan membaca teks.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-white/15 bg-indigo-950/80 p-5 shadow-md">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-400 text-indigo-950">
-                    <Icon icon="lucide:hand" className="h-5 w-5" />
-                  </div>
-                  <h4 className="mt-3 font-heading text-base font-bold text-white">
-                    3. Praktik Kinestetik
-                  </h4>
-                  <p className="mt-1.5 font-body text-xs sm:text-sm font-semibold leading-relaxed text-blue-100/85">
-                    Anak diajak menyentuh, memilih simulasi eksperimen, dan
-                    mempraktikkan percobaan sains sederhana yang aman di rumah.
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/virtual-lab')}
+                    className="inline-flex items-center gap-2 rounded-full bg-purple-400 hover:bg-purple-300 px-5 py-2 font-heading text-xs font-bold text-slate-950 shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                  >
+                    <span>Buka Lab Virtual</span>
+                    <Icon icon="lucide:arrow-right" className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
             )}
