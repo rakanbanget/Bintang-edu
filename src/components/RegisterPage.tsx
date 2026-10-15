@@ -487,40 +487,42 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                 )}
               </div>
 
-              {/* Pilihan Jenjang Kelas */}
-              <div>
-                <label
-                  htmlFor="register-grade"
-                  className="mb-1.5 block font-body text-xs font-bold text-indigo-950"
-                >
-                  Jenjang Kelas
-                </label>
-                <div className="relative">
-                  <Icon
-                    icon="lucide:graduation-cap"
-                    className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                  />
-                  <select
-                    id="register-grade"
-                    value={selectedGrade}
-                    onChange={(e) => setSelectedGrade(e.target.value)}
-                    className="w-full rounded-xl border-2 border-slate-200 bg-slate-50 py-2.5 pl-10 pr-10 font-body text-sm font-semibold text-indigo-950 outline-none transition-all focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 cursor-pointer appearance-none"
+              {/* Pilihan Jenjang Kelas (Hanya untuk Siswa/Orang Tua, ditiadakan untuk Guru) */}
+              {role !== 'teacher' && (
+                <div>
+                  <label
+                    htmlFor="register-grade"
+                    className="mb-1.5 block font-body text-xs font-bold text-indigo-950"
                   >
-                    <option value="" disabled className="text-slate-400">
-                      Pilih jenjang kelasmu
-                    </option>
-                    {GRADE_OPTIONS.map((grade) => (
-                      <option key={grade.value} value={grade.value}>
-                        {grade.label}
+                    {role === 'parent' ? 'Jenjang Kelas Anak' : 'Jenjang Kelas'}
+                  </label>
+                  <div className="relative">
+                    <Icon
+                      icon="lucide:graduation-cap"
+                      className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                    />
+                    <select
+                      id="register-grade"
+                      value={selectedGrade}
+                      onChange={(e) => setSelectedGrade(e.target.value)}
+                      className="w-full rounded-xl border-2 border-slate-200 bg-slate-50 py-2.5 pl-10 pr-10 font-body text-sm font-semibold text-indigo-950 outline-none transition-all focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 cursor-pointer appearance-none"
+                    >
+                      <option value="" disabled className="text-slate-400">
+                        {role === 'parent' ? 'Pilih jenjang kelas anak' : 'Pilih jenjang kelasmu'}
                       </option>
-                    ))}
-                  </select>
-                  <Icon
-                    icon="lucide:chevron-down"
-                    className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                  />
+                      {GRADE_OPTIONS.map((grade) => (
+                        <option key={grade.value} value={grade.value}>
+                          {grade.label}
+                        </option>
+                      ))}
+                    </select>
+                    <Icon
+                      icon="lucide:chevron-down"
+                      className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Persetuan */}
               <div className="flex items-start gap-2 pt-2">
