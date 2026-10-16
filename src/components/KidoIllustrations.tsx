@@ -958,6 +958,25 @@ export const IconAIGenerator3D: React.FC = () => (
   </svg>
 );
 
+export const IconLeaderboard3D: React.FC = () => (
+  <svg
+    viewBox="0 0 120 120"
+    className="w-28 h-28 sm:w-32 sm:h-32 shrink-0 drop-shadow-md"
+  >
+    <circle cx="60" cy="62" r="48" fill="#F59E0B" opacity="0.25" />
+    <circle cx="60" cy="60" r="42" fill="#D97706" />
+    <g transform="translate(30, 24)">
+      <rect x="18" y="52" width="24" height="6" rx="2" fill="#78350F" />
+      <rect x="22" y="44" width="16" height="9" fill="#B45309" />
+      <path d="M12 16 C4 16 4 34 14 36" fill="none" stroke="#FDE68A" strokeWidth="4" strokeLinecap="round" />
+      <path d="M48 16 C56 16 56 34 46 36" fill="none" stroke="#FDE68A" strokeWidth="4" strokeLinecap="round" />
+      <path d="M12 12 L48 12 C48 30 40 44 30 44 C20 44 12 30 12 12 Z" fill="#FACC15" />
+      <path d="M18 12 L42 12 C42 26 36 38 30 38 C24 38 18 26 18 12 Z" fill="#FEF08A" />
+      <polygon points="30,20 33,27 40,27 34,31 36,38 30,34 24,38 26,31 20,27 27,27" fill="#F59E0B" />
+    </g>
+  </svg>
+);
+
 export const IconMultiSensori3D: React.FC = () => (
   <svg
     viewBox="0 0 120 120"

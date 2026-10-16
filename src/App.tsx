@@ -17,7 +17,6 @@ import {
 } from './components/ScienceModulesSection.tsx';
 import { FooterSection } from './components/FooterSection.tsx';
 import { SolarSystemMiniLab } from './components/SolarSystemMiniLab.tsx';
-import { TeacherParentPortalSection } from './components/TeacherParentPortalSection.tsx';
 import { BintangEduMascot } from './components/BintangEduLogo.tsx';
 import { StudentDashboardMOne } from './components/StudentDashboardMOne.tsx';
 import { TeacherDashboard } from './components/TeacherDashboard.tsx';
@@ -52,7 +51,7 @@ export default function App() {
     return 'landing';
   });
 
-  const [initialLabStation, setInitialLabStation] = useState<StationId>('water-cycle');
+  const [initialLabStation, setInitialLabStation] = useState<StationId>('human-anatomy');
   const [userSession, setUserSession] = useState<UserSession>(() => {
     // Check localStorage for logged-in user session
     if (typeof window !== 'undefined') {
@@ -411,22 +410,6 @@ export default function App() {
     navigateTo('dashboard');
   };
 
-  // Handler untuk membuka tab spesifik di Dashboard Guru langsung dari Landing Page (Wajib Auth)
-  const handleOpenTeacherPortal = (tab: string = 'monitoring') => {
-    setTeacherDashboardTab(tab);
-    if (!userSession.isAuthenticated) {
-      showToast('🔒 Akses Pendidik: Silakan masuk terlebih dahulu.');
-      navigateTo('login');
-      return;
-    }
-    navigateTo('dashboard');
-    if (tab === 'generator') {
-      showToast('✨ Membuka AI Studio Lembar Kerja & Modul IPA di Dashboard Guru...');
-    } else {
-      showToast('📊 Membuka Analisis Progress & Gaya Belajar Siswa di Dashboard Guru...');
-    }
-  };
-
   // 1. HALAMAN AUTH: LOGIN & REGISTER (Galaxy-Styled Dedicated Pages)
   if (currentRoute === 'login') {
     return (
@@ -610,14 +593,6 @@ export default function App() {
 
         {/* 🧪 Mini Lab Tata Surya Interaktif — Try-It-Out Eksperimen Instan */}
         <SolarSystemMiniLab isAuthenticated={userSession.isAuthenticated} />
-
-        {/* 🌟 Portal Khusus Guru & Orang Tua — Kolaborasi & Pantauan Belajar */}
-        <TeacherParentPortalSection
-          onNavigate={navigateTo}
-          onOpenTeacherTab={handleOpenTeacherPortal}
-          onNotify={showToast}
-          isAuthenticated={userSession.isAuthenticated}
-        />
       </main>
 
       {/* 3. FOOTER PENUTUP */}

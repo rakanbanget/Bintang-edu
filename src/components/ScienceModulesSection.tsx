@@ -5,7 +5,7 @@ import { BintangEduMascot } from './BintangEduLogo.tsx';
 import {
   IconPopulerSains3D,
   IconKuisGamifikasi3D,
-  IconAIGenerator3D,
+  IconLeaderboard3D,
   IconMultiSensori3D,
   AppBannerMascotTablet,
 } from './KidoIllustrations.tsx';
@@ -13,7 +13,7 @@ import {
 export type ActiveFeatureKey =
   | 'populer-sains'
   | 'kuis-gamifikasi'
-  | 'ai-generator'
+  | 'leaderboard'
   | 'multi-sensori';
 
 export interface ScienceQuizItem {
@@ -121,15 +121,6 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [completedQuizIds, setCompletedQuizIds] = useState<number[]>([]);
 
-  const [aiGrade, setAiGrade] = useState('Kelas 4 SD');
-  const [aiTopic, setAiTopic] = useState('Tata Surya & Planet');
-  const [generatedSheet, setGeneratedSheet] = useState<{
-    title: string;
-    objective: string;
-    experimentSteps: string[];
-    funFact: string;
-  } | null>(null);
-
   const currentQuiz =
     INTERACTIVE_QUIZZES[activeQuizIndex] || INTERACTIVE_QUIZZES[0];
   const isAnswered = selectedOption !== null;
@@ -178,61 +169,6 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
   const handleSwitchQuiz = (idx: number) => {
     setSelectedOption(null);
     onSelectQuizIndex(idx);
-  };
-
-  const handleGenerateAISheet = (e: React.FormEvent) => {
-    e.preventDefault();
-    const templates: Record<
-      string,
-      {
-        title: string;
-        objective: string;
-        experimentSteps: string[];
-        funFact: string;
-      }
-    > = {
-      'Tata Surya & Planet': {
-        title: `Lembar Eksperimen AI: Model Orbit Planet (${aiGrade})`,
-        objective:
-          'Siswa memahami susunan 8 planet mengelilingi Matahari serta perbedaan ukuran planet batuan dan raksasa gas.',
-        experimentSteps: [
-          'Siapkan bola kuning sebagai Matahari di tengah meja dan plastisin warna-warni sebagai planet.',
-          'Susun urutan planet dari terdekat: Merkurius, Venus, Bumi, Mars, Jupiter, Saturnus, Uranus, Neptunus.',
-          'Tambahkan cincin kertas melingkar pada bola Saturnus lalu putar mengelilingi Matahari!',
-        ],
-        funFact:
-          'Tahukah kamu? Satu hari di planet Venus lebih lama daripada satu tahun di Venus karena rotasinya sangat lambat!',
-      },
-      'Fotosintesis & Tumbuhan': {
-        title: `Lembar Eksperimen AI: Gelembung Oksigen Daun (${aiGrade})`,
-        objective:
-          'Siswa membuktikan secara langsung bahwa daun hijau menghasilkan gas oksigen ketika terkena cahaya matahari.',
-        experimentSteps: [
-          'Masukkan sehelai daun segar ke dalam gelas bening berisi air bersih.',
-          'Letakkan gelas di bawah sinar matahari pagi selama 20–30 menit.',
-          'Amati munculnya gelembung-gelembung udara kecil di permukaan daun—itulah oksigen!',
-        ],
-        funFact:
-          'Daun berwarna hijau karena memiliki zat klorofil yang bekerja seperti panel surya alami penangkap cahaya!',
-      },
-      'Gaya & Magnet': {
-        title: `Lembar Eksperimen AI: Detektif Benda Magnetis (${aiGrade})`,
-        objective:
-          'Siswa mampu membedakan benda feromagnetik (ditarik kuat oleh magnet) dan benda non-magnetik di rumah/kelas.',
-        experimentSteps: [
-          'Kumpulkan 5 benda: klip kertas besi, penghapus karet, pensil kayu, sendok logam, dan uang koin.',
-          'Dekatkan magnet batang pada masing-masing benda dan catat mana yang menempel.',
-          'Coba dekatkan dua ujung magnet bertanda sama untuk merasakan gaya tolak-menolaknya!',
-        ],
-        funFact:
-          'Bumi tempat kita berpijak sebenarnya adalah sebuah magnet raksasa yang membuat jarum kompas selalu menunjuk Utara!',
-      },
-    };
-
-    const chosen =
-      templates[aiTopic] || templates['Tata Surya & Planet'];
-    setGeneratedSheet(chosen);
-    onNotify(`✨ Modul AI "${chosen.title}" berhasil dibuat!`);
   };
 
   const handleCardAction = (featureKey: ActiveFeatureKey) => {
@@ -354,41 +290,41 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
               </div>
             </div>
 
-            {/* KARTU 3: AI GENERATOR UNTUK GURU/ORTU */}
+            {/* KARTU 3: LEADERBOARD & PERINGKAT KADET */}
             <div
-              onClick={() => handleCardAction('ai-generator')}
+              onClick={() => handleCardAction('leaderboard')}
               className={`group flex flex-col sm:flex-row items-center sm:items-start gap-6 rounded-3xl border p-6 sm:p-7 transition-all duration-200 cursor-pointer ${
-                activeFeature === 'ai-generator'
-                  ? 'border-emerald-400 bg-gradient-to-br from-[#1c0f45] to-[#13092d] shadow-[0_0_30px_rgba(52,211,153,0.22)]'
-                  : 'border-purple-500/20 bg-[#120a2a]/60 hover:border-emerald-400/60 hover:bg-[#1a0e40]/70'
+                activeFeature === 'leaderboard'
+                  ? 'border-amber-400 bg-gradient-to-br from-[#1c0f45] to-[#13092d] shadow-[0_0_30px_rgba(251,191,36,0.25)]'
+                  : 'border-purple-500/20 bg-[#120a2a]/60 hover:border-amber-400/60 hover:bg-[#1a0e40]/70'
               }`}
             >
               <div
                 className="animate-bounce"
                 style={{ animationDuration: '3.4s' }}
               >
-                <IconAIGenerator3D />
+                <IconLeaderboard3D />
               </div>
               <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                <span className="font-heading text-[11px] font-bold uppercase tracking-wider text-emerald-300">
-                  FITUR GURU & ORANG TUA
+                <span className="font-heading text-[11px] font-bold uppercase tracking-wider text-amber-300">
+                  KLASEMEN & PRESTASI KADET
                 </span>
                 <h3 className="mt-1 font-heading text-xl sm:text-2xl font-bold text-white">
-                  AI Generator untuk Guru/Ortu
+                  Papan Peringkat Galaksi
                 </h3>
                 <p className="mt-2 font-body text-sm font-semibold leading-relaxed text-purple-100/85">
-                  Susun lembar kerja eksperimen IPA di rumah, rangkuman materi
-                  kurikulum SD, dan ide praktik sains instan berbasis AI.
+                  Pantau posisi kadet bintang terhebat dari seluruh sekolah di
+                  Indonesia. Kumpulkan bintang kuis dan raih trofi juara antariksa!
                 </p>
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleCardAction('ai-generator');
+                    handleCardAction('leaderboard');
                   }}
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-950 shadow-md transition-all hover:bg-emerald-300 hover:scale-105 active:scale-95 cursor-pointer"
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-amber-400 px-6 py-2.5 font-heading text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-950 shadow-md transition-all hover:bg-amber-300 hover:scale-105 active:scale-95 cursor-pointer"
                 >
-                  <span>BUAT MODUL AI</span>
+                  <span>LIHAT LEADERBOARD</span>
                 </button>
               </div>
             </div>
@@ -464,8 +400,8 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
                     label: '2. Kuis Gamifikasi',
                   },
                   {
-                    key: 'ai-generator',
-                    label: '3. AI Generator Guru/Ortu',
+                    key: 'leaderboard',
+                    label: '3. Leaderboard Galaksi',
                   },
                   {
                     key: 'multi-sensori',
@@ -698,138 +634,142 @@ export const ScienceModulesSection: React.FC<ScienceModulesSectionProps> = ({
               </div>
             )}
 
-            {/* KONTEN 3: AI GENERATOR UNTUK GURU / ORTU */}
-            {activeFeature === 'ai-generator' && (
-              <div className="mt-6 grid gap-6 lg:grid-cols-12 items-start">
-                <form
-                  onSubmit={handleGenerateAISheet}
-                  className="lg:col-span-5 rounded-2xl border border-purple-500/20 bg-[#120a2a]/80 p-6 shadow-md space-y-4"
-                >
-                  <div className="flex items-center gap-2">
-                    <Icon
-                      icon="lucide:book-open"
-                      className="h-5 w-5 text-emerald-300"
-                    />
-                    <h4 className="font-heading text-base font-bold text-white">
-                      Generator Lembar Eksperimen AI
-                    </h4>
-                  </div>
-
-                  <div>
-                    <label className="block font-heading text-xs font-bold text-yellow-300 mb-1">
-                      Pilih Jenjang Kelas SD
-                    </label>
-                    <select
-                      value={aiGrade}
-                      onChange={(e) => setAiGrade(e.target.value)}
-                      className="w-full rounded-xl border border-white/20 bg-indigo-900 px-3.5 py-2.5 font-body text-sm font-bold text-white focus:border-yellow-300 focus:outline-none"
-                    >
-                      <option value="Kelas 1–2 SD">Kelas 1–2 SD</option>
-                      <option value="Kelas 3–4 SD">Kelas 3–4 SD</option>
-                      <option value="Kelas 5–6 SD">Kelas 5–6 SD</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block font-heading text-xs font-bold text-yellow-300 mb-1">
-                      Topik Kurikulum Sains IPA
-                    </label>
-                    <select
-                      value={aiTopic}
-                      onChange={(e) => setAiTopic(e.target.value)}
-                      className="w-full rounded-xl border border-white/20 bg-indigo-900 px-3.5 py-2.5 font-body text-sm font-bold text-white focus:border-yellow-300 focus:outline-none"
-                    >
-                      <option value="Tata Surya & Planet">
-                        Tata Surya & Planet
-                      </option>
-                      <option value="Fotosintesis & Tumbuhan">
-                        Fotosintesis & Tumbuhan
-                      </option>
-                      <option value="Gaya & Magnet">Gaya & Magnet</option>
-                    </select>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full rounded-full bg-amber-400 py-3 font-heading text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-950 shadow-md hover:bg-amber-300 cursor-pointer"
-                  >
-                    ✨ SUSUN PANDUAN EKSPERIMEN AI
-                  </button>
-                </form>
-
-                <div className="lg:col-span-7 rounded-2xl border border-purple-500/20 bg-[#120a2a]/80 p-6 shadow-md">
-                  {generatedSheet ? (
-                    <div className="space-y-3">
-                      <span className="inline-block rounded-full bg-emerald-400/20 border border-emerald-400/40 px-3 py-1 font-heading text-xs font-bold text-emerald-300">
-                        Siap Dicetak / Dipraktikkan
-                      </span>
-                      <h4 className="font-heading text-lg font-bold text-white">
-                        {generatedSheet.title}
+            {/* KONTEN 3: LEADERBOARD & PERINGKAT KADET GALAKSI */}
+            {activeFeature === 'leaderboard' && (
+              <div className="mt-6 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-purple-900/40 to-indigo-900/40 border border-amber-400/30 p-5 backdrop-blur-md">
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-400 text-slate-950 font-extrabold text-2xl shadow-lg">
+                      🏆
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading text-xs font-bold uppercase tracking-wider text-amber-300">
+                          Klasemen Musim Sains SD se-Indonesia
+                        </span>
+                        <span className="rounded-full bg-emerald-400/20 border border-emerald-400/40 px-2 py-0.5 text-[10px] font-extrabold text-emerald-300">
+                          Live Update
+                        </span>
+                      </div>
+                      <h4 className="mt-0.5 font-heading text-lg sm:text-xl font-bold text-white">
+                        Top Kadet Penjelajah Galaksi Terhebat
                       </h4>
-                      <p className="font-body text-xs sm:text-sm font-semibold text-blue-100">
-                        <strong className="text-yellow-300">
-                          Tujuan Belajar:
-                        </strong>{' '}
-                        {generatedSheet.objective}
-                      </p>
-                      <div className="space-y-2 pt-1">
-                        <div className="font-heading text-xs font-bold uppercase text-cyan-300">
-                          Langkah Eksperimen Bersama Anak:
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => (onNavigate ? onNavigate('peringkat') : navigate('/leaderboard'))}
+                      className="inline-flex items-center gap-2 rounded-full bg-amber-400 hover:bg-amber-300 px-5 py-2.5 font-heading text-xs sm:text-sm font-extrabold text-slate-950 shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                    >
+                      <Icon icon="solar:cup-star-bold-duotone" className="text-base" />
+                      <span>Buka Leaderboard Lengkap</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onSelectFeature('kuis-gamifikasi')}
+                      className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 px-5 py-2.5 font-heading text-xs sm:text-sm font-bold text-white cursor-pointer transition-all"
+                    >
+                      <Icon icon="solar:stars-minimalistic-bold-duotone" className="text-base text-yellow-300" />
+                      <span>Kumpulkan Bintang</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3 Kartu Juara Podium Teratas */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    {
+                      rank: 1,
+                      name: 'Alya Putri Antariksa',
+                      school: 'SDN Menteng 01 Jakarta',
+                      grade: 'Kelas 5 SD',
+                      stars: 3450,
+                      xp: 3820,
+                      streak: 18,
+                      badge: '👑 Komandan Utama Galaksi',
+                      borderColor: 'border-amber-400',
+                      bgPodium: 'bg-gradient-to-b from-amber-500/20 via-slate-900/80 to-indigo-950/90',
+                      medalBg: 'bg-amber-400 text-slate-950',
+                      medalIcon: '🥇',
+                    },
+                    {
+                      rank: 2,
+                      name: 'Rafi Alamsyah',
+                      school: 'SD Bintang Kejora Bandung',
+                      grade: 'Kelas 6 SD',
+                      stars: 3120,
+                      xp: 3410,
+                      streak: 15,
+                      badge: '🥈 Kapten Penjelajah Orbit',
+                      borderColor: 'border-slate-300/80',
+                      bgPodium: 'bg-gradient-to-b from-slate-400/15 via-slate-900/80 to-indigo-950/90',
+                      medalBg: 'bg-slate-300 text-slate-950',
+                      medalIcon: '🥈',
+                    },
+                    {
+                      rank: 3,
+                      name: 'Kenzo Pratama',
+                      school: 'SD Cendekia Medan',
+                      grade: 'Kelas 5 SD',
+                      stars: 2890,
+                      xp: 3100,
+                      streak: 12,
+                      badge: '🥉 Penjelajah Sains Cilik',
+                      borderColor: 'border-amber-700/80',
+                      bgPodium: 'bg-gradient-to-b from-amber-700/15 via-slate-900/80 to-indigo-950/90',
+                      medalBg: 'bg-amber-700 text-white',
+                      medalIcon: '🥉',
+                    },
+                  ].map((cadet) => (
+                    <div
+                      key={cadet.rank}
+                      className={`relative rounded-3xl border ${cadet.borderColor} ${cadet.bgPodium} p-5 shadow-lg flex flex-col justify-between`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-heading text-xs font-black ${cadet.medalBg}`}>
+                            <span>{cadet.medalIcon}</span>
+                            <span>Peringkat #{cadet.rank}</span>
+                          </span>
+                          <span className="flex items-center gap-1 font-heading text-xs font-bold text-amber-300">
+                            <Icon icon="solar:fire-bold" className="text-orange-400" />
+                            <span>{cadet.streak} Hari Aktif</span>
+                          </span>
                         </div>
-                        {generatedSheet.experimentSteps.map((step, i) => (
-                          <div
-                            key={i}
-                            className="flex items-start gap-2.5 rounded-xl bg-white/5 border border-white/10 p-3 font-body text-xs sm:text-sm font-semibold text-white"
-                          >
-                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400 font-heading text-xs font-bold text-slate-950">
-                              {i + 1}
-                            </span>
-                            <span>{step}</span>
+
+                        <div className="mt-4 flex items-center gap-3">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-extrabold text-lg shadow-md border border-white/20">
+                            {cadet.name.substring(0, 2).toUpperCase()}
                           </div>
-                        ))}
-                      </div>
-                      <div className="rounded-xl bg-indigo-900/90 border border-yellow-300/30 p-3.5 text-xs font-semibold text-blue-100">
-                        <strong className="text-yellow-300">
-                          🌟 Fakta Sains Seru:{' '}
-                        </strong>
-                        {generatedSheet.funFact}
+                          <div>
+                            <h5 className="font-heading text-sm sm:text-base font-bold text-white line-clamp-1">
+                              {cadet.name}
+                            </h5>
+                            <p className="font-body text-xs text-purple-200/80 line-clamp-1">
+                              {cadet.school} · {cadet.grade}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-3 rounded-xl bg-white/5 border border-white/10 px-3 py-1.5 text-[11px] font-bold text-amber-200 text-center">
+                          {cadet.badge}
+                        </div>
                       </div>
 
-                      <div className="pt-2 flex flex-wrap items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => navigate('/dashboard')}
-                          className="inline-flex items-center gap-2 rounded-full bg-emerald-400 hover:bg-emerald-300 px-5 py-2 font-heading text-xs font-bold text-slate-950 shadow-md cursor-pointer transition-all hover:scale-105 active:scale-95"
-                        >
-                          <Icon icon="lucide:layout-dashboard" className="h-4 w-4" />
-                          <span>Buka Lembar di Dashboard Guru/Ortu</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => navigate('/virtual-lab')}
-                          className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/20 px-5 py-2 font-heading text-xs font-bold text-white cursor-pointer transition-all"
-                        >
-                          <Icon icon="lucide:test-tube" className="h-4 w-4 text-cyan-300" />
-                          <span>Uji Coba di Lab Virtual</span>
-                        </button>
+                      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between font-heading text-xs font-extrabold">
+                        <span className="text-amber-300 flex items-center gap-1">
+                          <Icon icon="solar:star-bold" className="text-amber-400" />
+                          <span>{cadet.stars.toLocaleString('id-ID')} ⭐</span>
+                        </span>
+                        <span className="text-cyan-300 flex items-center gap-1">
+                          <Icon icon="solar:bolt-bold" className="text-cyan-400" />
+                          <span>{cadet.xp.toLocaleString('id-ID')} XP</span>
+                        </span>
                       </div>
                     </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-8 text-center">
-                      <Icon
-                        icon="lucide:sparkles"
-                        className="h-10 w-10 text-yellow-300 mb-2 animate-pulse"
-                      />
-                      <h4 className="font-heading text-base font-bold text-white">
-                        Pilih Kelas & Topik Sains di Samping
-                      </h4>
-                      <p className="mt-1 max-w-md font-body text-xs sm:text-sm font-semibold text-blue-200/80">
-                        AI Generator Bintang Edu akan membuatkan langkah
-                        eksperimen sederhana beserta fakta sains menarik untuk
-                        mendampingi anak belajar di rumah atau sekolah.
-                      </p>
-                    </div>
-                  )}
+                  ))}
                 </div>
               </div>
             )}
